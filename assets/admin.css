@@ -1,0 +1,56 @@
+
+.settings {
+    width: 100%;
+    max-width: 720px;
+}
+
+.settings * {
+    box-sizing: border-box;
+    /* font-size: 1.05em; */
+}
+
+.wrap h1 {
+    font-size: 1.85rem;
+}
+
+.settings h2 {
+    font-size: 1.45rem;
+}
+
+.settings h3 {
+    font-size: 1.2rem;
+}
+
+.settings button {
+    margin-left: 0.5rem;
+}
+
+
+.settings .formline {
+    margin: 1.25rem auto;
+}
+.settings .formline label[for] {
+    display: block;
+    margin-bottom: 0.25rem;
+    font-weight: 600;
+}
+
+.formline input[type="text"],
+.formline input[type="email"],
+.formline input[type="url"],
+.formline input[type="password"],
+.formline input[type="tel"],
+.formline input[type="number"],
+.formline input[type="search"],
+.formline select,
+.formline textarea {
+    width: 100%;
+    max-width: 500px;
+    padding: 0 0.5rem;
+    font-size: 14px;
+    vertical-align: middle;
+}
+.formline .info {
+    font-style: italic;
+    color: #666;
+}
