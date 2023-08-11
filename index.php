@@ -61,11 +61,11 @@ class AdminPage {
     }
     
     public function add_js() {
-        wp_enqueue_script("admp-admin-js", $this->base_url . "/admin-page/assets/admin.js");
+        wp_enqueue_script("admp-admin-js", $this->base_url . "/wp-admin-page/assets/admin.js");
     }
     
     public function add_css() {
-        wp_enqueue_style("admp-admin-css", $this->base_url . "/admin-page/assets/admin.css");
+        wp_enqueue_style("admp-admin-css", $this->base_url . "/wp-admin-page/assets/admin.css");
     }
 
     private function save() {

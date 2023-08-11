@@ -1,4 +1,4 @@
-﻿# Admin Page for themes and plugins
+﻿# Admin Page for Wordpress themes and plugins
 This is a package to add an admistrative page in Wordpress, that can be used in themes and plugins.
 
 The ```admin-page/settings-config.php``` file contains the ```$theme_settings``` variable, which contains all the configuration items you've chosen to work in your theme or plugin. Just set this variable, include the file ```admin-page/index.php``` and instantiate the class ```AdminPage```.
@@ -118,7 +118,7 @@ You can use the ```tabs``` parameter to add some other HTML to the admin page. I
 
 Than you can use the filter ```save_admin_page_message``` to save your fields an change the return message.
 
-Example:
+Example for a plugin:
     
     // Settings
     include_once  plugins_url() .  "/my-plugin-dir/wp-admin-page/index.php";
