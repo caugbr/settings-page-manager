@@ -12,6 +12,7 @@ class AdminPage {
 
     var $page_intro = '';
     var $form_title = 'Options';
+    var $tab_label = 'Options';
     var $form_intro = '';
     var $button_label = 'Save options';
     var $saved_msg = 'Settings successfully updated';
@@ -20,11 +21,12 @@ class AdminPage {
     var $base_url;
     var $page_url;
     var $page_id;
+    var $tabs = [];
 
     var $settings;
     var $saved_options = [];
 
-    public function __construct($params) {
+    public function __construct($params = []) {
         foreach ($params as $pname => $param) {
             if (property_exists($this, $pname)) {
                 $this->{$pname} = $param;
@@ -33,6 +35,9 @@ class AdminPage {
         $this->page_url = admin_url() . $this->admin_path();
         $this->settings = new ThemeSettings('admin_page_settings');
         $this->saved_options = $this->settings->get_saved();
+
+        @unlink($this->tabs['settings']);
+
         add_action('admin_menu', [$this, 'add_page']);
     }
     
@@ -65,13 +70,15 @@ class AdminPage {
 
     private function save() {
         $msg = '';
-        if (!empty($_POST['action']) && $_POST['action'] == 'save-settings') {
+        if (!empty($_POST['action'])) {
             if(!wp_verify_nonce($_REQUEST['security'], 'admin_page')) {
-                $msg = $this->security_msg;
-            } else {
+                return $this->security_msg;
+            }
+            if ($_POST['action'] == 'save-settings') {
                 $this->settings->save($_POST['settings']);
                 $msg = $this->saved_msg;
             }
+            $msg = apply_filters('save_admin_page_message', $msg);
         }
         return $msg;
     }
@@ -99,26 +106,77 @@ class AdminPage {
 
             <div class="settings">
                 <form action="<?php print $this->page_url; ?>" method="post" id="admin-page-form">
-                    <?php if ($this->form_title) { ?>
-                        <h2><?php print $this->form_title; ?></h2>
+                <div class="tabs" data-tab="settings">
+
+                    <?php if (!empty($this->tabs)) { ?>
+                    <div class="tab-links">
+                        <a class="tab" href="#" data-tab="settings" data-action="save-settings">
+                            <?php print $this->tab_label; ?>
+                        </a>
+                        <?php foreach ($this->tabs as $id => $info) { ?>
+                        <a class="tab" href="#" data-tab="<?php print $id; ?>" data-action="<?php print $info['action']; ?>">
+                            <?php print $info['label']; ?>
+                        </a>
+                        <?php } ?>
+                    </div>
+                    <div class="tab-stage">
+                        <div class="tab-content" data-tab="settings">
                     <?php } ?>
 
-                    <?php if ($this->form_intro) { ?>
-                        <p><?php print $this->form_intro; ?></p>
+                            <?php if ($this->form_title) { ?>
+                                <h2><?php print $this->form_title; ?></h2>
+                            <?php } ?>
+        
+                            <?php if ($this->form_intro) { ?>
+                                <p><?php print $this->form_intro; ?></p>
+                            <?php } ?>
+        
+                            <?php $this->settings->render(); ?>
+
+                    <?php if (!empty($this->tabs)) { ?>
+                        </div>
+                        <?php foreach ($this->tabs as $id => $info) { ?>
+                            <div class="tab-content" data-tab="<?php print $id; ?>">
+                            <?php print call_user_func($info['callback']); ?>
+                            </div>
+                        <?php } ?>
+                    </div>
                     <?php } ?>
-
-                    <?php $this->settings->render(); ?>
-
+        
                     <div class="formline buttons">
                         <button type="submit" id="save_settings" class="button button-primary">
                             <?php print $this->button_label; ?>
                         </button>
                     </div>
+
                     <input type="hidden" name="action" value="save-settings">
                     <?php wp_nonce_field('admin_page', 'security'); ?>
                 </form>
             </div>
         </div>
+        <?php
+        $this->tabs_css();
+    }
+
+    private function tabs_css() {
+        ?>
+        <style>
+            <?php foreach (array_keys($this->tabs) as $id) { ?>
+            .settings .tabs[data-tab="<?php print $id; ?>"] .tab-links a.tab[data-tab="<?php print $id; ?>"],
+            <?php } ?>
+            .settings .tabs[data-tab="settings"] .tab-links a.tab[data-tab="settings"] {
+                background-color: #efefef;
+                border-bottom-color: #efefef;
+                font-weight: bold;
+                cursor: default;
+            }
+            <?php foreach (array_keys($this->tabs) as $id) { ?>
+            .settings .tabs[data-tab="<?php print $id; ?>"] .tab-stage .tab-content[data-tab="<?php print $id; ?>"],
+            <?php } ?>
+            .settings .tabs[data-tab="settings"] .tab-stage .tab-content[data-tab="settings"] {
+                display: block;
+            }
+        </style>
         <?php
     }
 }
