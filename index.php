@@ -114,7 +114,7 @@ class AdminPage {
                             <?php print $this->tab_label; ?>
                         </a>
                         <?php foreach ($this->tabs as $id => $info) { ?>
-                        <a class="tab" href="#" data-tab="<?php print $id; ?>" data-action="<?php print $info['action']; ?>">
+                        <a class="tab" href="#" data-tab="<?php print $id; ?>" data-action="<?php print $info['action'] ?? 'save-settings'; ?>">
                             <?php print $info['label']; ?>
                         </a>
                         <?php } ?>
