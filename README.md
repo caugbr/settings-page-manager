@@ -99,19 +99,19 @@ This is the array that contains your configuration options. For now these are th
         ]
     ]
 
-	function all_post_formats() {
-		return [
-			[ "label" => __('Aside'), "value" => 'aside' ],
-			[ "label" => __('Gallery'), "value" => 'gallery' ],
-			[ "label" => __('Link'), "value" => 'link' ],
-			[ "label" => __('Image'), "value" => 'image' ],
-			[ "label" => __('Quote'),  "value" => 'quote' ],
-			[ "label" => __('Status'), "value" => 'status' ],
-			[ "label" => __('Video'), "value" => 'video' ],
-			[ "label" => __('Audio'), "value" => 'audio' ],
-			[ "label" => __('Chat'), "value" => 'chat' ]
-		];
-	}
+    function all_post_formats() {
+        return [
+            [ "label" => __('Aside'), "value" => 'aside' ],
+            [ "label" => __('Gallery'), "value" => 'gallery' ],
+            [ "label" => __('Link'), "value" => 'link' ],
+            [ "label" => __('Image'), "value" => 'image' ],
+            [ "label" => __('Quote'),  "value" => 'quote' ],
+            [ "label" => __('Status'), "value" => 'status' ],
+            [ "label" => __('Video'), "value" => 'video' ],
+            [ "label" => __('Audio'), "value" => 'audio' ],
+            [ "label" => __('Chat'), "value" => 'chat' ]
+        ];
+    }
 
 ## Using tabs to display other contents
 You can use the ```tabs``` parameter to add some other HTML to the admin page. In  this case the settings will appear in the first tab that will have the fixed id 'settings' and the label 'Options', but you can specify it using the param ```tab_label```. Each tab is an array with two items, 'label' - the label for the tab link and 'callback' - the name of the rendering function. Remember that you are adding fields to the same form and the submit button will be the same to all tabs.
@@ -148,11 +148,11 @@ Example for a plugin:
         <?php
     }
 
-	function save_my_fields($msg) {
-		if ($_POST['action'] == 'save-my-field') {
-			// save field here...
-			$msg = "The value of My field ({$_POST['my_field']}) was updated.";
-		}
-		return $msg;
-	}
-	add_filter('save_admin_page_message', 'save_my_fields');
+    function save_my_fields($msg) {
+        if ($_POST['action'] == 'save-my-field') {
+            // save field here...
+            $msg = "The value of My field ({$_POST['my_field']}) was updated.";
+        }
+        return $msg;
+    }
+    add_filter('save_admin_page_message', 'save_my_fields');
