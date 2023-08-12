@@ -127,8 +127,7 @@ Than you can use the filter ```save_admin_page_message``` to save your fields an
 
 Example for a plugin:
     
-    // Settings
-    include_once plugins_url() .  "/my-plugin-dir/wp-admin-page/index.php";
+    include_once plugin_dir_path(__FILE__) .  "wp-admin-page/index.php";
     $settings = new AdminPage([
         "parent_slug" => "plugins.php",
         "page_title" => "My Plugin admin page",
