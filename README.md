@@ -75,7 +75,7 @@ This is the array that contains your configuration options. For now these are th
     }
 
 ## Class ```AdminPage```
-The constructor expects one parameter, an associative array containing all variables. These are the defaut values:
+The constructor expects one parameter, an associative array containing all variables. These are the defaut values:\
 See: [add_submenu_page](https://developer.wordpress.org/reference/functions/add_submenu_page/).
 
     [
