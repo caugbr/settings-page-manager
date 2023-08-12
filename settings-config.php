@@ -7,7 +7,7 @@
 
 $theme_settings = [
     "hide_wp_bar" => [
-        "type" => "checkbox",
+        "type" => "switch",
         "description" => 'Hide Wordpress admin bar on frontend overriding user setting',
         "label" =>  'Hide WP admin bar',
         "default_value" => '0'

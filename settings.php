@@ -4,7 +4,6 @@ include_once dirname(__FILE__) . "/settings-config.php";
 class ThemeSettings {
 
     var $settings;
-    var $saved;
     var $option_name;
 
     function __construct($opt_name) {
@@ -12,7 +11,10 @@ class ThemeSettings {
 
         $this->option_name = $opt_name;
         $this->settings = $theme_settings;
-        $this->saved = $this->get_saved();
+    }
+
+    public function set_settings($settings) {
+        $this->settings = $settings;
     }
 
     public function options($opts) {
@@ -24,11 +26,12 @@ class ThemeSettings {
 
     public function render() {
         $textRe = "/^(text|email|url|password|tel|number|search|date|datetime-local)$/";
+        $saved = $this->get_saved();
         
         foreach ($this->settings as $id => $info) {
             $info['default_value'] = $info['default_value'] ?? '';
             $info['options'] = $info['options'] ?? [];
-            $value = $this->saved[$id] ?? $info['default_value'];
+            $value = $saved[$id] ?? $info['default_value'];
             $options = $this->options($info['options']);
             ?>
             <div class="formline">
@@ -42,6 +45,23 @@ class ThemeSettings {
                             value="1"
                             <?php if ($value == '1') print ' checked'; ?>
                         >
+                        <?php print $info['label']; ?>
+                    </label>
+                <?php } ?>
+    
+                <?php if ($info['type'] == 'switch') { ?>
+                    <label for="<?php print $id; ?>">
+                        <input type="hidden" name="settings[<?php print $id; ?>]" value="0">
+                        <span class="switch">
+                            <input 
+                                type="checkbox" 
+                                name="settings[<?php print $id; ?>]" 
+                                id="<?php print $id; ?>" 
+                                value="1"
+                                <?php if ($value == '1') print ' checked'; ?>
+                            >
+                            <span class="slider"></span>
+                        </span>
                         <?php print $info['label']; ?>
                     </label>
                 <?php } ?>
@@ -66,14 +86,14 @@ class ThemeSettings {
                         <?php if (!empty($info['placeholder'])) {
                             print "placeholder=\"{$info['placeholder']}\"";
                         } ?>
-                    ><?php print $this->saved[$id] ?? $info['default_value']; ?></textarea>
+                    ><?php print $saved[$id] ?? $info['default_value']; ?></textarea>
                 <?php } ?>
     
                 <?php if (preg_match($textRe, $info['type'])) { ?>
                     <label for="<?php print $id; ?>"><?php print $info['label']; ?></label>
                     <input 
                         type="<?php print $info['type']; ?>" 
-                        value="<?php print $this->saved[$id] ?? $info['default_value']; ?>" 
+                        value="<?php print $saved[$id] ?? $info['default_value']; ?>" 
                         name="settings[<?php print $id; ?>]" 
                         id="<?php print $id; ?>"
                         <?php if (!empty($info['placeholder'])) {
@@ -124,20 +144,25 @@ class ThemeSettings {
         }
     }
 
+    public function hidden($name, $value) {
+        ?>
+        <input type="hidden" name="<?php print $name; ?>" value="<?php print $value; ?>">
+        <?php
+    }
+
     public function get_saved() {
-        $settings = get_option($this->option_name);
-        if (!$settings) {
-            $settings = [];
+        $saved = get_option($this->option_name);
+        if (!$saved) {
+            $saved = [];
             foreach ($this->settings as $id => $info) {
-                $settings[$id] = $info['default_value'];
+                $saved[$id] = $info['default_value'] ?? '';
             }
         }
-        return $this->saved = $settings;
+        return $saved;
     }
 
     public function save($settings) {
         $ret = update_option($this->option_name, $settings);
-        $this->get_saved();
         return $ret;
     }
 }

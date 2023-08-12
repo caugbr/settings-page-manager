@@ -9,6 +9,8 @@ class AdminPage {
     var $capability = 'manage_options';
     var $menu_slug = '';
     var $position = NULL;
+    var $icon_url = 'dashicons-admin-generic';
+    var $link_title = '';
 
     var $page_intro = '';
     var $form_title = 'Options';
@@ -22,9 +24,11 @@ class AdminPage {
     var $page_url;
     var $page_id;
     var $tabs = [];
+    var $subpages = [];
+    var $subpage_ids = [];
 
     var $settings;
-    var $saved_options = [];
+    var $tmp;
 
     public function __construct($params = []) {
         foreach ($params as $pname => $param) {
@@ -34,30 +38,84 @@ class AdminPage {
         }
         $this->page_url = admin_url() . $this->admin_path();
         $this->settings = new ThemeSettings('admin_page_settings');
-        $this->saved_options = $this->settings->get_saved();
 
+        // user cannot use 'settings' as tab id, it's reserved.
         @unlink($this->tabs['settings']);
 
         add_action('admin_menu', [$this, 'add_page']);
     }
+
+    public function temp_settings($option_name) {
+        return new ThemeSettings($option_name);
+    }
     
     public function admin_path() {
-        $sign = strstr($this->parent_slug, '?') ? '&' : '?';
-        return $this->parent_slug . $sign . "page=" . $this->menu_slug;
+        $slug = empty($this->parent_slug) ? 'admin.php' : $this->parent_slug;
+        $sign = strstr($slug, '?') ? '&' : '?';
+        return $slug . $sign . "page=" . $this->menu_slug;
+    }
+    
+    public function render() {
+        return $this->settings->render();
     }
     
     public function add_page() {
-        $this->page_id = add_submenu_page(
-            $this->parent_slug,
-            $this->page_title,
-            $this->menu_title,
-            $this->capability,
-            $this->menu_slug,
-            [$this, 'admin_page'],
-            $this->position
-        );
-        add_action('admin_print_scripts-' . $this->page_id, [$this, 'add_js']);
-        add_action('admin_print_styles-' . $this->page_id, [$this, 'add_css'] );
+        if ($this->parent_slug) {
+            $this->page_id = add_submenu_page(
+                $this->parent_slug,
+                $this->page_title,
+                $this->menu_title,
+                $this->capability,
+                $this->menu_slug,
+                [$this, 'admin_page'],
+                $this->position
+            );
+        } else {
+            $this->page_id = add_menu_page(
+                $this->page_title,
+                $this->menu_title,
+                $this->capability,
+                $this->menu_slug,
+                [$this, 'admin_page'],
+                $this->icon_url,
+                $this->position
+            );
+            if (!empty($this->subpages)) {
+                if (!empty($this->link_title)) {
+                    add_submenu_page(
+                        $this->menu_slug,
+                        $this->page_title,
+                        $this->link_title,
+                        $this->capability,
+                        $this->menu_slug,
+                        [$this, 'admin_page'],
+                        $this->position
+                    );
+                }
+                foreach ($this->subpages as $page) {
+                    $this->subpage_ids[$page['menu_slug']] = add_submenu_page(
+                        $this->menu_slug,
+                        $page['page_title'],
+                        $page['menu_title'],
+                        $this->capability,
+                        $page['menu_slug'],
+                        $page['callback']
+                    );
+                }
+            }
+        }
+        $this->add_stuff();
+        if (!empty($this->subpage_ids)) {
+            foreach ($this->subpage_ids as $pid) {
+                $this->add_stuff($pid);
+            }
+        }
+    }
+
+    public function add_stuff($page_id = false) {
+        $page_id = $page_id ? $page_id : $this->page_id;
+        add_action('admin_print_scripts-' . $page_id, [$this, 'add_js']);
+        add_action('admin_print_styles-' . $page_id, [$this, 'add_css'] );
     }
     
     public function add_js() {
@@ -70,8 +128,8 @@ class AdminPage {
 
     private function save() {
         $msg = '';
-        if (!empty($_POST['action'])) {
-            if(!wp_verify_nonce($_REQUEST['security'], 'admin_page')) {
+        if (!empty($_POST['action']) && !empty($_POST['settings'])) {
+            if(!wp_verify_nonce($_POST['security'], 'admin_page')) {
                 return $this->security_msg;
             }
             if ($_POST['action'] == 'save-settings') {
@@ -123,15 +181,15 @@ class AdminPage {
                         <div class="tab-content" data-tab="settings">
                     <?php } ?>
 
-                            <?php if ($this->form_title) { ?>
-                                <h2><?php print $this->form_title; ?></h2>
-                            <?php } ?>
-        
-                            <?php if ($this->form_intro) { ?>
-                                <p><?php print $this->form_intro; ?></p>
-                            <?php } ?>
-        
-                            <?php $this->settings->render(); ?>
+                    <?php if ($this->form_title) { ?>
+                        <h2><?php print $this->form_title; ?></h2>
+                    <?php } ?>
+
+                    <?php if ($this->form_intro) { ?>
+                        <p><?php print $this->form_intro; ?></p>
+                    <?php } ?>
+
+                    <?php $this->render(); ?>
 
                     <?php if (!empty($this->tabs)) { ?>
                         </div>
@@ -148,7 +206,6 @@ class AdminPage {
                             <?php print $this->button_label; ?>
                         </button>
                     </div>
-
                     <input type="hidden" name="action" value="save-settings">
                     <?php wp_nonce_field('admin_page', 'security'); ?>
                 </form>
