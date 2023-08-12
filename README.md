@@ -121,7 +121,7 @@ Check this example for a theme, using some default values:
     $theme_options = $settings->get_saved();
 
 ## Using tabs to display other contents
-You can use the ```tabs``` parameter to add some other HTML to the admin page. In  this case the settings will appear in the first tab that will have the fixed id 'settings' and the label 'Options', but you can specify it using the param ```tab_label```. Each tab is an array with 3 items, ```label``` - the label for the tab link, ```callback``` - the name of the rendering function and ```action``` - the value for ```$_POST['action']``` if this tab is visible on form submission. Remember that you are adding fields to the same form and the submit button will be the same to all tabs.
+You can use the ```tabs``` parameter to add some other HTML to the admin page. In  this case the settings will appear in the first tab that will have the fixed id 'settings' and the label 'Options', but you can specify it using the param ```tab_label```. Each tab is an array with 3 items, ```label``` - the label for the tab link, ```callback``` - the name of the rendering function and ```action``` - the value for ```$_POST['action']``` if this tab is visible on form submission. Remember that you are adding fields to the same form and the submit button will be the same to all tabs, so you should work with $_POST['action'] as a condition to save your content.
 
 Than you can use the filter ```save_admin_page_message``` to save your fields an change the return message.
 
