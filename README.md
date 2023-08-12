@@ -2,7 +2,12 @@
 This is a package to add an admistrative page in Wordpress, that can be used by themes and plugins.
 
 ## Install
-There's no installation needed, just copy the entire folder ```wp-admin-page``` to the main folder of your theme or plugin.
+There's no installation needed, just add the entire folder ```wp-admin-page``` to the main folder of your theme or plugin.
+
+*Using Git*\
+Open a terminal, navigate to the main folder of your theme ou plugin, type ```git clone https://github.com/caugbr/wp-admin-page.git wp-admin-page``` and press Enter.\
+*Download*\
+Create the folder ```wp-admin-page``` on the main folder of your theme or plugin and paste all content inside it.
 
 The ```admin-page/settings-config.php``` file contains the ```$theme_settings``` variable, which contains all the configuration items you've chosen to work in your theme or plugin. Just set this variable, include the file ```admin-page/index.php``` and instantiate the class ```AdminPage```.
 
