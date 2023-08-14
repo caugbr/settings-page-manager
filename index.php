@@ -29,7 +29,6 @@ class AdminPage {
 
     var $config_var = [];
     var $settings;
-    var $tmp;
 
     public function __construct($params = [], $config_var = []) {
         foreach ($params as $pname => $param) {
