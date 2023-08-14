@@ -12,7 +12,7 @@ Copy the contents of the folder ```wp-admin-page-main``` in Zip file, create the
 The ```admin-page/settings-config.php``` file contains the ```$theme_settings``` variable, which contains all the configuration items you've chosen to work in your theme or plugin. Just set this variable, include the file ```admin-page/index.php``` and instantiate the class ```AdminPage```.
 
 ### Fill ```$theme_settings```
-This is the array that contains your configuration options. For now these are the available input types: ```text``` (or ```email```, ```url```, ```password```, ```tel```, ```number```, ```search```, ```date```, ```datetime-local```), ```switch```, ```textarea```, ```select```, ```checkbox```, ```checkbox-group``` and ```radio-group```.
+This is the array that contains your configuration options. For now these are the available input types: ```text``` (or ```email```, ```url```, ```password```, ```tel```, ```number```, ```search```, ```date```, ```datetime-local```), ```range```, ```switch```, ```textarea```, ```select```, ```checkbox```, ```checkbox-group``` and ```radio-group```.
 
     $theme_settings = [
         "hide_wp_bar" => [
@@ -20,6 +20,12 @@ This is the array that contains your configuration options. For now these are th
             "description" => 'Hide Wordpress admin bar on frontend',
             "label" => 'Hide WP admin bar',
             "default_value" => '0'
+        ],
+        "expertise" => [
+            "type" => "range",
+            "description" => 'Define your expertise level',
+            "label" => 'Expertise level',
+            "default_value" => 0
         ],
         "sidebar_location" => [
             "type" => "select",
@@ -85,12 +91,12 @@ See: [add_submenu_page](https://developer.wordpress.org/reference/functions/add_
 
     [
         // parameters sent to function add_submenu_page()
-        "parent_slug" => "themes.php", // [required]
-        "page_title" => "", // [required] used also in <h1> tag
-        "menu_title" => "", // [required]
-        "capability" => "manage_options", // [required]
-        "menu_slug" => "", // [required]
-        "position" => NULL,
+        "parent_slug" => "themes.php", // [required] parent menu item (slug)
+        "page_title" => "", // [required] used for title tag and <h1> tag
+        "menu_title" => "", // [required] label for the menu link
+        "capability" => "manage_options", // [required] user capability required
+        "menu_slug" => "", // [required] used in page URL and other places
+        "position" => NULL, // menu position
 
         // if is a top level item (parent_slug is empty)
         "icon_url" => "dashicons-admin-generic" // any dashicon
@@ -213,7 +219,7 @@ In the below example, we create a top level item with one subpage. The subpages 
         <div class="wrap">
             <h1>My plugin</h1>
             <?php if (!empty($msg)) { ?>
-                <div id="message" class="notice notice-success settings-error is-dismissible">
+                <div id="message" class="notice notice-success is-dismissible">
                     <p><strong><?php print $msg; ?></strong></p>
                     <button type="button" class="notice-dismiss">
                         <span class="screen-reader-text">Dismiss this notice.</span>

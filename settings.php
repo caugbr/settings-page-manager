@@ -1,16 +1,42 @@
 <?php
 include_once dirname(__FILE__) . "/settings-config.php";
+include_once dirname(__FILE__) . "/post-picker.php";
 
 class ThemeSettings {
 
     var $settings;
     var $option_name;
+    var $post_picker;
 
     function __construct($opt_name) {
         global $theme_settings;
 
         $this->option_name = $opt_name;
         $this->settings = $theme_settings;
+
+        $this->post_picker = false;
+    }
+
+    public function render_post_picker($id, $info, $saved = []) {
+        if (class_exists('PostPicker')) {
+            $pp = new PostPicker(
+                [ "id" => "settings[{$id}]", "multiple" => $info['multiple'], "value" => $saved[$id] ?? '' ], 
+                [ "post_type" => $info['post_type'] ]
+            );
+            $this->post_picker = true;
+            ?>
+                <label for="<?php print $id; ?>"><?php print $info['label']; ?></label>
+                <?php $pp->picker_html(); ?>
+            <?php
+        }
+    }
+
+    public function post_picker_stuff() {
+        if ($this->post_picker) {
+            $pp = new PostPicker();
+            print $pp->picker_css();
+            print $pp->picker_js();
+        }
     }
 
     public function set_settings($settings) {
@@ -27,7 +53,6 @@ class ThemeSettings {
     public function render() {
         $textRe = "/^(text|email|url|password|tel|number|search|date|datetime-local)$/";
         $saved = $this->get_saved();
-        
         foreach ($this->settings as $id => $info) {
             $info['default_value'] = $info['default_value'] ?? '';
             $info['options'] = $info['options'] ?? [];
@@ -49,7 +74,32 @@ class ThemeSettings {
                     </label>
                 <?php } ?>
     
+                <?php 
+                    if ($info['type'] == 'post-picker') {
+                        $this->render_post_picker($id, $info, $saved);
+                    }
+                ?>
+    
+                <?php if ($info['type'] == 'range') { ?>
+                    <label for="<?php print $id; ?>">
+                        <?php print $info['label']; ?>
+                    </label>
+                    <span class="range">
+                        <input 
+                            type="range" 
+                            name="settings[<?php print $id; ?>]" 
+                            id="<?php print $id; ?>" 
+                            value="<?php print $saved[$id] ?? $info['default_value']; ?>"
+                            <?php if (!empty($info['min'])) print " min='{$info['min']}'"; ?>
+                            <?php if (!empty($info['max'])) print " max='{$info['max']}'"; ?>
+                            <?php if (!empty($info['step'])) print " step='{$info['step']}'"; ?>
+                        >
+                        <span class="display"></span>
+                    </span>
+                <?php } ?>
+                
                 <?php if ($info['type'] == 'switch') { ?>
+                    <label for="<?php print $id; ?>"><?php print $info['label']; ?></label>
                     <label for="<?php print $id; ?>">
                         <input type="hidden" name="settings[<?php print $id; ?>]" value="0">
                         <span class="switch">
@@ -62,12 +112,11 @@ class ThemeSettings {
                             >
                             <span class="slider"></span>
                         </span>
-                        <?php print $info['label']; ?>
+                        <!-- <?php print $info['label']; ?> -->
                     </label>
                 <?php } ?>
     
                 <?php if ($info['type'] == 'select') { ?>
-                    <label for="<?php print $id; ?>"><?php print $info['label']; ?></label>
                     <select name="settings[<?php print $id; ?>]" id="<?php print $id; ?>">
                         <?php foreach($options as $opt) { ?>
                             <option 
@@ -142,6 +191,7 @@ class ThemeSettings {
             </div>
             <?php 
         }
+        $this->post_picker_stuff();
     }
 
     public function hidden($name, $value) {

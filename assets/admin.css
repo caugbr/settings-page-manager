@@ -96,6 +96,86 @@
     left: 24px;
     background-color: #3582c4;
 }
+
+
+/********** Range Input Styles **********/
+/*Range Reset*/
+.formline input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    background: transparent;
+    cursor: pointer;
+    width: 100%;
+    max-width: 15rem;
+    margin: 0.5rem auto;
+    vertical-align: middle;
+}
+
+.formline input[type="range"] + .display {
+    font-size: 16px;
+    font-weight: bold;
+    margin-left: 0.5rem;
+    vertical-align: middle;
+}
+
+/* Removes default focus */
+.formline input[type="range"]:focus {
+    outline: none;
+}
+
+/***** Chrome, Safari, Opera and Edge Chromium styles *****/
+/* slider track */
+.formline input[type="range"]::-webkit-slider-runnable-track {
+    background-color: #ccc;
+    border-radius: 0.5rem;
+    height: 0.5rem;  
+}
+
+/* slider thumb */
+.formline input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none; /* Override default look */
+    appearance: none;
+    margin-top: -6px; /* Centers thumb on the track */
+
+    /*custom styles*/
+    background-color: #3582c4;
+    height: 1.2rem;
+    width: 1.2rem;
+    border-radius: 50%;
+}
+
+.formline input[type="range"]:focus::-webkit-slider-thumb {   
+    /* border: 1px solid #053a5f; */
+    outline: 1px solid #3582c4;
+    outline-offset: 0.1rem; 
+}
+
+/******** Firefox styles ********/
+/* slider track */
+.formline input[type="range"]::-moz-range-track {
+    background-color: #ccc;
+    border-radius: 0.5rem;
+    height: 0.5rem;
+}
+
+/* slider thumb */
+.formline input[type="range"]::-moz-range-thumb {
+    border: none; /*Removes extra border that FF applies*/
+    border-radius: 0; /*Removes default border-radius that FF applies*/
+
+    /*custom styles*/
+    background-color: #3582c4;
+    height: 1.2rem;
+    width: 1.2rem;
+    border-radius: 50%;
+}
+
+.formline input[type="range"]:focus::-moz-range-thumb {
+    /* border: 1px solid #053a5f; */
+    outline: 1px solid #3582c4;
+    outline-offset: 0.1rem; 
+}
+ 
   
 
 

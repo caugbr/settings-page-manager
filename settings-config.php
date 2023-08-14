@@ -6,6 +6,23 @@
  */
 
 $theme_settings = [
+    "some_percentage" => [
+        "type" => "range",
+        "description" => 'Blah',
+        "label" =>  'Range',
+        "default_value" => '0',
+        "min" => 10,
+        "max" => 200,
+        "step" => 10
+    ],
+    "default_post" => [
+        "type" => "post-picker",
+        "description" => 'Select the posts you want',
+        "label" =>  'Select a post',
+        "default_value" => '0',
+        "post_type" => 'post',
+        "multiple" => '1'
+    ],
     "hide_wp_bar" => [
         "type" => "switch",
         "description" => 'Hide Wordpress admin bar on frontend overriding user setting',

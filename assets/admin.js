@@ -30,4 +30,19 @@ window.addEventListener('load', evt => {
             }
         }
     }
+
+    const rangeInputs = document.querySelectorAll('.formline input[type="range"]');
+    if (rangeInputs) {
+        Array.from(rangeInputs).forEach(input => {
+            displayValue(input)
+            input.addEventListener('input', evt => displayValue(evt.target));
+        });
+    }
 });
+
+function displayValue(input) {
+    const display = input.closest('.formline').querySelector('.display');
+    if (display) {
+        display.innerHTML = input.value;
+    }  
+}

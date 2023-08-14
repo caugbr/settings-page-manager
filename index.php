@@ -152,7 +152,7 @@ class AdminPage {
             <?php } ?>
 
             <?php if (!empty($msg)) { ?>
-                <div id="message" class="notice notice-success settings-error is-dismissible">
+                <div id="message" class="notice notice-success is-dismissible">
                     <p>
                         <strong><?php print $msg; ?></strong>
                     </p>
