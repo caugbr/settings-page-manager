@@ -26,11 +26,6 @@ class PostPicker {
     public function __construct($cfg = [], $args = []) {
         $this->cfg = array_merge($this->default_cfg, $cfg);
         $this->args = array_merge($this->default_args, $args);
-        // print_r($this->cfg);
-        $this->get_posts();
-    }
-
-    public function get_posts() {
         $this->posts = get_posts($this->args);
     }
 
@@ -123,8 +118,10 @@ class PostPicker {
                 if (!evt || !evt.target.matches('.post-picker, .post-picker *')) {
                     if (document.body.classList.contains('post-picker-open')) {
                         const field = document.querySelector('#search-field');
-                        field.value = '';
-                        field.dispatchEvent(new Event('input'));
+                        if (field) {
+                            field.value = '';
+                            field.dispatchEvent(new Event('input'));
+                        }
                         document.body.classList.remove('post-picker-open');
                     }
                 }
@@ -134,6 +131,7 @@ class PostPicker {
                 if (allPickers.length) {
                     Array.from(allPickers).forEach(picker => {
                         const inputId = picker.getAttribute('data-id');
+                        const searchField = picker.querySelector('#search-field');
                         picker.querySelector('.open-picker').addEventListener('click', evt => {
                             evt.preventDefault();
                             document.body.classList.add('post-picker-open');
@@ -146,23 +144,27 @@ class PostPicker {
                                     input.checked = true;
                                 }
                             });
-                            picker.querySelector('#search-field').focus();
+                            if (searchField) {
+                                searchField.focus();
+                            }
                         });
                         picker.querySelector('.close-picker').addEventListener('click', evt => {
                             evt.preventDefault();
                             document.body.classList.remove('post-picker-open');
                         });
-                        picker.querySelector('#search-field').addEventListener('input', evt => {
-                            const labels = picker.querySelectorAll('li > label');
-                            if (labels.length) {
-                                const val = evt.target.value.toLowerCase();
-                                Array.from(labels).forEach(label => {
-                                    const ival = label.innerHTML.trim().toLowerCase();
-                                    const li = label.closest('li');
-                                    li.style.display = (!val || ival.includes(val)) ? 'list-item' : 'none';
-                                });
-                            }
-                        });
+                        if (searchField) {
+                            picker.querySelector('#search-field').addEventListener('input', evt => {
+                                const labels = picker.querySelectorAll('li > label');
+                                if (labels.length) {
+                                    const val = evt.target.value.toLowerCase();
+                                    Array.from(labels).forEach(label => {
+                                        const ival = label.innerHTML.trim().toLowerCase();
+                                        const li = label.closest('li');
+                                        li.style.display = (!val || ival.includes(val)) ? 'list-item' : 'none';
+                                    });
+                                }
+                            });
+                        }
                         picker.querySelector('.picker-select').addEventListener('click', evt => {
                             evt.preventDefault();
                             let ret = {};

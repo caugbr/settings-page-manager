@@ -21,7 +21,8 @@ $theme_settings = [
         "label" =>  'Select a post',
         "default_value" => [ "1" => "Hello world" ],
         "post_type" => 'post',
-        // "multiple" => '1'
+        // "search" => false,
+        "multiple" => '1'
     ],
     "hide_wp_bar" => [
         "type" => "switch",

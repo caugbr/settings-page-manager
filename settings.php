@@ -23,6 +23,7 @@ class ThemeSettings {
                 [
                     "id" => "settings[{$id}]",
                     "multiple" => $info['multiple'] ?? 0,
+                    "search" => $info['search'] ?? 1,
                     "value" => $saved[$id] ?? $info['default_value'] ?? NULL
                 ], 
                 [ "post_type" => $info['post_type'] ]
