@@ -9,9 +9,39 @@ Open a terminal, navigate to the main folder of your theme ou plugin, type ```gi
 *Download Zip*\
 Copy the contents of the folder ```wp-admin-page-main``` in Zip file, create the folder ```wp-admin-page``` on the main folder of your theme or plugin, and paste all content inside it.
 
-The ```admin-page/settings-config.php``` file contains the ```$theme_settings``` variable, which contains all the configuration items you've chosen to work in your theme or plugin. Just set this variable, include the file ```admin-page/index.php``` and instantiate the class ```AdminPage```.
+Just include the file ```admin-page/index.php``` and instantiate the class ```AdminPage```.
 
-### Fill ```$theme_settings```
+## Class ```AdminPage```
+The constructor expects two parameters. The first one is ```$params```, an associative array containing the configuration for the admin page itsef (see the defaut values below). The second parameter is ```$config_vars```, an array containing the user configuration items.\
+
+### ```$params```
+See: [add_submenu_page](https://developer.wordpress.org/reference/functions/add_submenu_page/).
+
+    [
+        // parameters sent to function add_submenu_page()
+        "parent_slug" => "themes.php", // [required] parent menu item (slug)
+        "page_title" => "", // [required] used for title tag and <h1> tag
+        "menu_title" => "", // [required] label for the menu link
+        "capability" => "manage_options", // [required] user capability required
+        "menu_slug" => "", // [required] used in page URL and other places
+        "position" => NULL, // menu position
+
+        // if is a top level item (parent_slug is empty)
+        "icon_url" => "dashicons-admin-generic" // any dashicon
+        "link_title" => "", // by default, in a top level menu item, the first link is a duplication
+                            // of the top level link. Fill link_title to change the label on first link.
+
+        // other parameters
+        "page_intro" => "", // An optional text to display below <h1> tag
+        "form_title" => "Options", // An optional subtitle
+        "form_intro" => "", // Optional text to display below subtitle
+        "button_label" => "Save options", // Label for submit button
+        "saved_msg" => "Settings successfully updated", // Message after save options
+        "security_msg" => "Security check failed and settings could not be updated", // Identity check failed
+        "base_url" => "" // [required] The URL to theme or plugin folder
+    ]
+
+### ```$config_vars```
 This is the array that contains your configuration options. For now these are the available input types: ```text``` (or ```email```, ```url```, ```password```, ```tel```, ```number```, ```search```, ```date```, ```datetime-local```), ```post-picker```, ```range```, ```switch```, ```textarea```, ```select```, ```checkbox```, ```checkbox-group``` and ```radio-group```.
 
     $theme_settings = [
@@ -113,39 +143,13 @@ These are properties shared by all types. There are some specific properties by 
  * ```multiple``` - Allow user to select more than one post
  * ```search``` - Send FALSE to remove the search box
  * ```search_placeholder``` - Text on the search box when it's empty
-
-## Class ```AdminPage```
-The constructor expects one parameter, an associative array containing all variables. These are the defaut values:\
-See: [add_submenu_page](https://developer.wordpress.org/reference/functions/add_submenu_page/).
-
-    [
-        // parameters sent to function add_submenu_page()
-        "parent_slug" => "themes.php", // [required] parent menu item (slug)
-        "page_title" => "", // [required] used for title tag and <h1> tag
-        "menu_title" => "", // [required] label for the menu link
-        "capability" => "manage_options", // [required] user capability required
-        "menu_slug" => "", // [required] used in page URL and other places
-        "position" => NULL, // menu position
-
-        // if is a top level item (parent_slug is empty)
-        "icon_url" => "dashicons-admin-generic" // any dashicon
-        "link_title" => "", // by default, in a top level menu item, the first link is a duplication
-                            // of the top level link. Fill link_title to change the label on first link.
-
-        // other parameters
-        "page_intro" => "", // An optional text to display below <h1> tag
-        "form_title" => "Options", // An optional subtitle
-        "form_intro" => "", // Optional text to display below subtitle
-        "button_label" => "Save options", // Label for submit button
-        "saved_msg" => "Settings successfully updated", // Message after save options
-        "security_msg" => "Security check failed and settings could not be updated", // Identity check failed
-        "base_url" => "" // [required] The URL to theme or plugin folder
-    ]
  
 ### Example
 Check this example for a theme, using some default values:
 
-    // Settings
+    // My config items in $config_items
+    include_once get_stylesheet_directory() .  "/config-items.php"; 
+    // Include and instanciate the class AdminPage
     include_once get_stylesheet_directory() .  "/wp-admin-page/index.php";
     $settings = new AdminPage([
         "page_title" => "Theme admin page",
@@ -155,7 +159,7 @@ Check this example for a theme, using some default values:
         "form_title" => "Site options",
         "form_intro" => "Manage your site options here",
         "base_url" => get_stylesheet_directory_uri()
-    ]);
+    ], $config_items);
     
     // Get the saved options to use in your code
     $theme_options = $settings->get_saved();
@@ -212,7 +216,7 @@ Example for a plugin:
 ## Link as a top level menu item
 You can create the menu link as a top level item and, optionally, work with subpages. To configure your page to be a top level menu item, just send ```parent_slug``` as an empty string.
 
-## Using subpages
+### Using subpages
 In the following example, we create a top level item with a subpage. The subpages have their own HTML and processing, but you can also create a separated config file and use the class ```ThemeSettings```, used by ```AdminPAge```, to render and save these config items.
 
     include_once get_stylesheet_directory() . "/wp-admin-page/index.php";
@@ -237,16 +241,12 @@ In the following example, we create a top level item with a subpage. The subpage
         global $settings;
 
         // include $other_settings
-        include_once get_stylesheet_directory() . "/wp-admin-page/other-config.php";
+        include_once get_stylesheet_directory() . "/other-config.php";
 
         // temp_settings() returns a new instance of ThemeSettings,
-        // configured to use our wp option 'my_page_settings'
-        $ts = $settings->temp_settings('my_page_settings');
-
-        // when class loads, it automatically reads the default file / variable
-        // (settings-config.php / $theme_settings), so we must
-        // send our variable to replace it, using set_settings()
-        $ts->set_settings($other_settings);
+        // configured to use our wp option 'my_page_settings', based on
+        // our configuration variable, $other_settings.
+        $ts = $settings->temp_settings('my_page_settings', $other_settings);
 
         $msg = save_my_page();
         ?>

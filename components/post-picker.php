@@ -196,6 +196,7 @@ class PostPicker {
 
     public function picker_html() {
         $input_type = $this->cfg['multiple'] ? 'checkbox' : 'radio';
+        $button_id = preg_replace("/settings\[([^\]]+)\]/", "$1", $this->cfg['id']) . "-button";
         ?>
         <div class="post-picker-input" data-id="<?php print $this->cfg['id']; ?>">
             <div class="picker-field"><?php
@@ -205,7 +206,9 @@ class PostPicker {
                     }
                 }
             ?></div>
-            <button class="button-secondary open-picker"><?php print $this->cfg['button_label']; ?></button>
+            <button class="button-secondary open-picker" id="<?php print $button_id; ?>">
+                <?php print $this->cfg['button_label']; ?>
+            </button>
             <div class="post-picker <?php print sanitize_title($this->cfg['title']); ?>">
                 <form action="#">
                     <header>

@@ -1,42 +1,37 @@
 <?php
-include_once dirname(__FILE__) . "/settings-config.php";
-include_once dirname(__FILE__) . "/components/post-picker.php";
 
 class ThemeSettings {
-
-    var $settings;
-    var $option_name;
-    var $post_picker;
-
-    function __construct($opt_name) {
-        global $theme_settings;
-
-        $this->option_name = $opt_name;
-        $this->settings = $theme_settings;
-
+    
+    private $settings;
+    private $option_name;
+    private $post_picker;
+    
+    function __construct($option_name, $settings) {
+        $this->option_name = $option_name;
+        $this->settings = $settings;
+        
         $this->post_picker = false;
     }
-
+    
     public function render_post_picker($id, $info, $saved = []) {
-        if (class_exists('PostPicker')) {
-            $cfg = [
-                "id" => "settings[{$id}]",
-                "multiple" => $info['multiple'] ?? 0,
-                "value" => $saved[$id] ?? $info['default_value'] ?? NULL
-            ];
-            if (!empty($info['search'])) {
-                $cfg["search"] = $info['search'];
-            }
-            if (!empty($info['search_placeholder'])) {
-                $cfg["search_placeholder"] = $info['search_placeholder'];
-            }
-            $pp = new PostPicker($cfg, [ "post_type" => $info['post_type'] ]);
-            $this->post_picker = true;
-            ?>
-                <label for="<?php print $id; ?>"><?php print $info['label']; ?></label>
-                <?php $pp->picker_html(); ?>
-            <?php
+        include_once dirname(__FILE__) . "/post-picker.php";
+        $cfg = [
+            "id" => "settings[{$id}]",
+            "multiple" => $info['multiple'] ?? 0,
+            "value" => $saved[$id] ?? $info['default_value'] ?? NULL
+        ];
+        if (!empty($info['search'])) {
+            $cfg["search"] = $info['search'];
         }
+        if (!empty($info['search_placeholder'])) {
+            $cfg["search_placeholder"] = $info['search_placeholder'];
+        }
+        $pp = new PostPicker($cfg, [ "post_type" => $info['post_type'] ]);
+        $this->post_picker = true;
+        ?>
+            <label for="<?php print $id; ?>-button"><?php print $info['label']; ?></label>
+            <?php $pp->picker_html(); ?>
+        <?php
     }
 
     public function post_picker_stuff() {
@@ -45,10 +40,6 @@ class ThemeSettings {
             print $pp->picker_css();
             print $pp->picker_js();
         }
-    }
-
-    public function set_settings($settings) {
-        $this->settings = $settings;
     }
 
     public function options($opts) {

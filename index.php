@@ -1,5 +1,5 @@
 <?php
-require dirname(__FILE__) . "/settings.php";
+require dirname(__FILE__) . "/components/settings.php";
 
 class AdminPage {
 
@@ -27,17 +27,18 @@ class AdminPage {
     var $subpages = [];
     var $subpage_ids = [];
 
+    var $config_var = [];
     var $settings;
     var $tmp;
 
-    public function __construct($params = []) {
+    public function __construct($params = [], $config_var = []) {
         foreach ($params as $pname => $param) {
             if (property_exists($this, $pname)) {
                 $this->{$pname} = $param;
             }
         }
         $this->page_url = admin_url() . $this->admin_path();
-        $this->settings = new ThemeSettings('admin_page_settings');
+        $this->settings = new ThemeSettings('admin_page_settings', $config_var);
 
         // user cannot use 'settings' as tab id, it's reserved.
         @unlink($this->tabs['settings']);
@@ -45,8 +46,8 @@ class AdminPage {
         add_action('admin_menu', [$this, 'add_page']);
     }
 
-    public function temp_settings($option_name) {
-        return new ThemeSettings($option_name);
+    public function temp_settings($option_name, $config_var = []) {
+        return new ThemeSettings($option_name, $config_var);
     }
     
     public function admin_path() {
