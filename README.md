@@ -12,7 +12,7 @@ Copy the contents of the folder ```wp-admin-page-main``` in Zip file, create the
 The ```admin-page/settings-config.php``` file contains the ```$theme_settings``` variable, which contains all the configuration items you've chosen to work in your theme or plugin. Just set this variable, include the file ```admin-page/index.php``` and instantiate the class ```AdminPage```.
 
 ### Fill ```$theme_settings```
-This is the array that contains your configuration options. For now these are the available input types: ```text``` (or ```email```, ```url```, ```password```, ```tel```, ```number```, ```search```, ```date```, ```datetime-local```), ```range```, ```switch```, ```textarea```, ```select```, ```checkbox```, ```checkbox-group``` and ```radio-group```.
+This is the array that contains your configuration options. For now these are the available input types: ```text``` (or ```email```, ```url```, ```password```, ```tel```, ```number```, ```search```, ```date```, ```datetime-local```), ```post-picker```, ```range```, ```switch```, ```textarea```, ```select```, ```checkbox```, ```checkbox-group``` and ```radio-group```.
 
     $theme_settings = [
         "hide_wp_bar" => [
