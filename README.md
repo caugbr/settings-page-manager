@@ -12,7 +12,7 @@ Copy the contents of the folder ```wp-admin-page-main``` in Zip file, create the
 Just include the file ```admin-page/index.php``` and instantiate the class ```AdminPage```.
 
 ## Class ```AdminPage```
-The constructor expects two parameters. The first one is ```$params```, an associative array containing the configuration for the admin page itsef (see the defaut values below). The second parameter is ```$config_vars```, an array containing the user configuration items.\
+The constructor expects two parameters. The first one is ```$params```, an associative array containing the configuration for the admin page itsef (see the defaut values below). The second parameter is ```$config_vars```, an array containing the user configuration items.
 
 ### ```$params```
 See: [add_submenu_page](https://developer.wordpress.org/reference/functions/add_submenu_page/).
