@@ -19,9 +19,9 @@ $theme_settings = [
         "type" => "post-picker",
         "description" => 'Select the posts you want',
         "label" =>  'Select a post',
-        "default_value" => '0',
+        "default_value" => [ "1" => "Hello world" ],
         "post_type" => 'post',
-        "multiple" => '1'
+        // "multiple" => '1'
     ],
     "hide_wp_bar" => [
         "type" => "switch",
@@ -45,7 +45,7 @@ $theme_settings = [
         "options" => "all_post_formats",
         "description" => 'Select the post formats that will have support in your theme.',
         "label" =>  'Post formats support',
-        "default_value" => ''
+        "default_value" => ['aside', 'gallery']
     ],
     "text_field" => [
         "type" => "text",

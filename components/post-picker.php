@@ -26,6 +26,7 @@ class PostPicker {
     public function __construct($cfg = [], $args = []) {
         $this->cfg = array_merge($this->default_cfg, $cfg);
         $this->args = array_merge($this->default_args, $args);
+        // print_r($this->cfg);
         $this->get_posts();
     }
 
@@ -53,7 +54,7 @@ class PostPicker {
                 background-color: #fff;
                 border: 1px solid #8c8f94;
                 border-radius: 4px;
-                min-height: 1.9rem;
+                min-height: 1.86rem;
                 flex-grow: 5;
                 flex-shrink: 5;
             }
@@ -61,7 +62,7 @@ class PostPicker {
                 width: auto;
                 flex-grow: 0;
                 flex-shrink: 0;
-                height: 1.9rem;
+                height: 1.86rem;
             }
             .close-picker {
                 float: right;
@@ -92,8 +93,17 @@ class PostPicker {
             .post-picker header {
                 padding: 1rem;
             }
+            .post-picker .search {
+                background-color: #efefef;
+                padding: 1rem 1rem 0.5rem;
+            }
+            .post-picker #search-field {
+                width: 100%;
+                max-width: 100%;
+                border: 1px solid #ddd;
+            }
             .post-picker .stage {
-                padding: 0.5rem 1rem;
+                padding: 0 1rem 0.5rem 1rem;
                 max-height: 15rem;
                 overflow: auto;
                 background-color: #efefef;                
@@ -109,6 +119,16 @@ class PostPicker {
     public function picker_js() {
         ?>
         <script>
+            function closePicker(evt) {
+                if (!evt || !evt.target.matches('.post-picker, .post-picker *')) {
+                    if (document.body.classList.contains('post-picker-open')) {
+                        const field = document.querySelector('#search-field');
+                        field.value = '';
+                        field.dispatchEvent(new Event('input'));
+                        document.body.classList.remove('post-picker-open');
+                    }
+                }
+            }
             window.addEventListener('load', () => {
                 const allPickers = document.querySelectorAll('.post-picker-input');
                 if (allPickers.length) {
@@ -126,10 +146,24 @@ class PostPicker {
                                     input.checked = true;
                                 }
                             });
+                            picker.querySelector('#search-field').focus();
                         });
                         picker.querySelector('.close-picker').addEventListener('click', evt => {
                             evt.preventDefault();
                             document.body.classList.remove('post-picker-open');
+                        });
+                        picker.querySelector('#search-field').addEventListener('input', evt => {
+                            const labels = picker.querySelectorAll('li > label');
+                            if (labels.length) {
+                                const val = evt.target.value.toLowerCase();
+                                Array.from(labels).forEach(label => {
+                                    const ival = label.innerHTML.trim().toLowerCase();
+                                    const li = label.closest('li');
+                                    // let display = 'list-item';
+
+                                    li.style.display = (!val || ival.includes(val)) ? 'list-item' : 'none';
+                                });
+                            }
                         });
                         picker.querySelector('.picker-select').addEventListener('click', evt => {
                             evt.preventDefault();
@@ -150,9 +184,14 @@ class PostPicker {
                                 wrapInputs.appendChild(hidden);
                                 displayValues.innerHTML += `#${id} ${title}<br>`;
                             });
-                            document.body.classList.remove('post-picker-open');
+                            // const field = picker.querySelector('#search-field');
+                            // field.value = '';
+                            // field.dispatchEvent(new Event('input'));
+                            // document.body.classList.remove('post-picker-open');
+                            closePicker();
                         });
                     });
+                    document.addEventListener('mousedown', closePicker);
                 }
             });
         </script>
@@ -177,6 +216,11 @@ class PostPicker {
                         <a href="#" class="close-picker">&times;</a>
                         <h3><?php print $this->cfg['title']; ?></h3>
                     </header>
+                    <?php if ($this->cfg['search']) { ?>
+                        <div class="search">
+                            <input type="text" id="search-field" placeholder="<?php print $this->cfg['search_placeholder']; ?>">
+                        </div>
+                    <?php } ?>
                     <div class="stage">
                         <ul>
                             <?php foreach ($this->posts as $post) { ?>

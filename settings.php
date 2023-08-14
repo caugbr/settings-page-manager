@@ -1,6 +1,6 @@
 <?php
 include_once dirname(__FILE__) . "/settings-config.php";
-include_once dirname(__FILE__) . "/post-picker.php";
+include_once dirname(__FILE__) . "/components/post-picker.php";
 
 class ThemeSettings {
 
@@ -20,7 +20,11 @@ class ThemeSettings {
     public function render_post_picker($id, $info, $saved = []) {
         if (class_exists('PostPicker')) {
             $pp = new PostPicker(
-                [ "id" => "settings[{$id}]", "multiple" => $info['multiple'], "value" => $saved[$id] ?? '' ], 
+                [
+                    "id" => "settings[{$id}]",
+                    "multiple" => $info['multiple'] ?? 0,
+                    "value" => $saved[$id] ?? $info['default_value'] ?? NULL
+                ], 
                 [ "post_type" => $info['post_type'] ]
             );
             $this->post_picker = true;

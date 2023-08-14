@@ -1,5 +1,12 @@
-
+let settingsChanged = false;
 window.addEventListener('load', evt => {
+    const adminForm = document.querySelector('#admin-page-form');
+    if (adminForm) {
+        Array.from(adminForm.elements).forEach(el => {
+            el.addEventListener('input', () => settingsChanged = true);
+        });
+    }
+
     const dismissMessage = document.querySelector('button.notice-dismiss');
     if (dismissMessage) {
         dismissMessage.addEventListener('click', evt => {
@@ -24,7 +31,6 @@ window.addEventListener('load', evt => {
         if (window.location.hash) {
             const hash = window.location.hash.replace('#', '');
             const link = document.querySelector(`.tab-links a[data-tab="${hash}"]`);
-            console.log('tab-links', link)
             if (link) {
                 link.dispatchEvent(new Event('click'));
             }
@@ -37,6 +43,12 @@ window.addEventListener('load', evt => {
             displayValue(input)
             input.addEventListener('input', evt => displayValue(evt.target));
         });
+    }
+});
+
+window.addEventListener('beforeunload', event => {
+    if (settingsChanged) {
+        event.returnValue = `Are you sure you want to leave?`;
     }
 });
 
