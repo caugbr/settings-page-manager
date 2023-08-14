@@ -184,10 +184,6 @@ class PostPicker {
                                 wrapInputs.appendChild(hidden);
                                 displayValues.innerHTML += `#${id} ${title}<br>`;
                             });
-                            // const field = picker.querySelector('#search-field');
-                            // field.value = '';
-                            // field.dispatchEvent(new Event('input'));
-                            // document.body.classList.remove('post-picker-open');
                             closePicker();
                         });
                     });
