@@ -54,7 +54,7 @@ This is the array that contains your configuration options. For now these are th
         ],
         "area_field" => [
             "type" => "textarea",
-            "description" => 'Test area field',
+            "description" => 'Textarea field',
             "label" =>  'Type a long text',
             "default_value" => 'blah'
         ],
@@ -84,6 +84,35 @@ This is the array that contains your configuration options. For now these are th
             [ "label" => __('Chat'), "value" => 'chat' ]
         ];
     }
+
+### Element properties
+These are properties shared by all types. There are some specific properties by element type, see below.
+ * ```type``` - Element type.\
+   One of: ```text``` (or ```email```, ```url```, ```password```, ```tel```, ```number```, ```search```, ```date```, ```datetime-local```), ```post-picker```, ```range```, ```switch```, ```textarea```, ```select```, ```checkbox```, ```checkbox-group``` and ```radio-group```
+ * ```label``` - Label, upon the element.
+ * ```description``` - Description, above element.
+ * ```default_value``` - The default value, if there is no saved value.
+
+
+**For list elements** (```select```, ```checkbox-group``` and ```radio-group```)
+ * ```options``` - An array containing the options.\
+ Each option is an array like this: ```[ "label" => "Visible text", "value" => "value property" ]```.
+
+
+**For text fields** (```text```, ```email```, ```url```, ```password```, ```tel```, ```number```, ```search```, ```date```, ```datetime-local``` and ```textarea```)
+ * ```placeholder``` - Text to display when field is empty.
+
+
+**For type** ```range```
+ * ```min``` - Minimum allowed value (default 0)
+ * ```max``` - Maximum allowed value (default 100)
+ * ```step``` - Step size (default 1)
+
+
+**For type** ```post-picker```
+ * ```post_type``` - Type of posts that will be in posts list
+ * ```multiple``` - Allow user to select more than one post
+
 
 ## Class ```AdminPage```
 The constructor expects one parameter, an associative array containing all variables. These are the defaut values:\
@@ -132,7 +161,12 @@ Check this example for a theme, using some default values:
     $theme_options = $settings->get_saved();
 
 ## Using tabs to display other contents
-You can use the ```tabs``` parameter to add some other HTML to the admin page. In  this case the settings will appear in the first tab that will have the fixed id 'settings' and the label 'Options', but you can specify it using the param ```tab_label```. Each tab is an array with 3 items, ```label``` - the label for the tab link, ```callback``` - the name of the rendering function and ```action``` - the value for ```$_POST['action']``` if this tab is visible on form submission. Remember that you are adding fields to the same form and the submit button will be the same to all tabs, so you should work with $_POST['action'] as a condition to save your content.
+You can use the ```tabs``` parameter to add some other HTML to the admin page. In  this case the settings will appear in the first tab that will have the fixed id 'settings' and the label 'Options', but you can specify it using the param ```tab_label```. Each tab is an array with 3 items:
+ * ```label``` - the label for the tab link
+ * ```callback``` - the name of the rendering function and
+ * ```action``` - the value for ```$_POST['action']``` if this tab is visible on form submission.
+
+Remember that you are adding fields to the same form and the submit button will be the same to all tabs, so you should work with ```$_POST['action']``` as a condition to save your content.
 
 Than you can use the filter ```save_admin_page_message``` to save your fields an change the return message.
 
@@ -179,7 +213,7 @@ Example for a plugin:
 You can create the menu link as a top level item and, optionally, work with subpages. To configure your page to be a top level menu item, just send ```parent_slug``` as an empty string.
 
 ## Using subpages
-In the below example, we create a top level item with one subpage. The subpages have their own HTML and processing, but you can also create a new config file and use the class ```ThemeSettings```, used by ```AdminPAge```, to render and save these config items.
+In the following example, we create a top level item with a subpage. The subpages have their own HTML and processing, but you can also create a separated config file and use the class ```ThemeSettings```, used by ```AdminPAge```, to render and save these config items.
 
     include_once get_stylesheet_directory() . "/wp-admin-page/index.php";
     $settings = new AdminPage([
@@ -210,7 +244,7 @@ In the below example, we create a top level item with one subpage. The subpages 
         $ts = $settings->temp_settings('my_page_settings');
 
         // when class loads, it automatically reads the default file / variable
-        // (settings-config.php / $theme_settings), so we have to 
+        // (settings-config.php / $theme_settings), so we must
         // send our variable to replace it, using set_settings()
         $ts->set_settings($other_settings);
 
