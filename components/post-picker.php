@@ -159,8 +159,6 @@ class PostPicker {
                                 Array.from(labels).forEach(label => {
                                     const ival = label.innerHTML.trim().toLowerCase();
                                     const li = label.closest('li');
-                                    // let display = 'list-item';
-
                                     li.style.display = (!val || ival.includes(val)) ? 'list-item' : 'none';
                                 });
                             }
