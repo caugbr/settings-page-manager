@@ -36,6 +36,10 @@
     margin-bottom: 0.25rem;
     font-weight: 600;
 }
+.settings .formline label.inline {
+    display: inline-block;
+    margin-right: 0.75rem;
+}
 
 .formline input[type="text"],
 .formline input[type="email"],

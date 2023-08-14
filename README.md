@@ -93,26 +93,24 @@ These are properties shared by all types. There are some specific properties by 
  * ```description``` - Description, above element.
  * ```default_value``` - The default value, if there is no saved value.
 
-
 **For list elements** (```select```, ```checkbox-group``` and ```radio-group```)
  * ```options``` - An array containing the options.\
  Each option is an array like this: ```[ "label" => "Visible text", "value" => "value property" ]```.
 
+**For types** ```checkbox-group``` **and** ```radio-group```
+ * ```inline``` - By default, list items are block elements. Use this option to force list items to be inline elements.
 
 **For text fields** (```text```, ```email```, ```url```, ```password```, ```tel```, ```number```, ```search```, ```date```, ```datetime-local``` and ```textarea```)
  * ```placeholder``` - Text to display when field is empty.
-
 
 **For type** ```range```
  * ```min``` - Minimum allowed value (default 0)
  * ```max``` - Maximum allowed value (default 100)
  * ```step``` - Step size (default 1)
 
-
 **For type** ```post-picker```
  * ```post_type``` - Type of posts that will be in posts list
  * ```multiple``` - Allow user to select more than one post
-
 
 ## Class ```AdminPage```
 The constructor expects one parameter, an associative array containing all variables. These are the defaut values:\

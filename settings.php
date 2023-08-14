@@ -154,7 +154,7 @@ class ThemeSettings {
                 <?php if ('radio-group' == $info['type']) { ?>
                     <label for="<?php print "{$id}-0"; ?>"><?php print $info['label']; ?></label>
                     <?php foreach($options as $i => $opt) { ?>
-                        <label for="<?php print "{$id}-{$i}"; ?>">
+                        <label for="<?php print "{$id}-{$i}"; ?>"<?php if (!empty($info['inline'])) print ' class="inline"'; ?>>
                             <input 
                                 type="radio" 
                                 name="settings[<?php print $id; ?>]" 
@@ -170,7 +170,7 @@ class ThemeSettings {
                 <?php if ('checkbox-group' == $info['type']) { ?>
                     <label for="<?php print "{$id}-0"; ?>"><?php print $info['label']; ?></label>
                     <?php foreach($options as $i => $opt) { ?>
-                        <label for="<?php print "{$id}-{$i}"; ?>">
+                        <label for="<?php print "{$id}-{$i}"; ?>"<?php if (!empty($info['inline'])) print ' class="inline"'; ?>>
                             <input 
                                 type="checkbox" 
                                 name="settings[<?php print $id; ?>][]" 

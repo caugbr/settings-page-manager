@@ -48,7 +48,7 @@ $theme_settings = [
         "default_value" => ''
     ],
     "text_field" => [
-        "type" => "text", // one of text|email|url|password|tel|number|search|date|datetime-local
+        "type" => "text",
         "description" => 'Text field',
         "label" =>  'Type something',
         "placeholder" => "Type here",
@@ -64,6 +64,7 @@ $theme_settings = [
         "type" => "radio-group",
         "description" => 'Choose one',
         "label" =>  'Radio group',
+        "inline" => true,
         "options" => [
             [ "value" => "yes", "label" => "Yes" ],
             [ "value" => "no", "label" => "No" ],

@@ -51,7 +51,7 @@ class PostPicker {
                 display: inline-block;
                 padding: 0.25rem 0.5rem;
                 background-color: #fff;
-                border: 1px solid #ccc;
+                border: 1px solid #8c8f94;
                 border-radius: 4px;
                 min-height: 1.9rem;
                 flex-grow: 5;
