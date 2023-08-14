@@ -111,6 +111,8 @@ These are properties shared by all types. There are some specific properties by 
 **For type** ```post-picker```
  * ```post_type``` - Type of posts that will be in posts list
  * ```multiple``` - Allow user to select more than one post
+ * ```search``` - Send FALSE to remove the search box
+ * ```search_placeholder``` - Text on the search box when it's empty
 
 ## Class ```AdminPage```
 The constructor expects one parameter, an associative array containing all variables. These are the defaut values:\

@@ -19,15 +19,18 @@ class ThemeSettings {
 
     public function render_post_picker($id, $info, $saved = []) {
         if (class_exists('PostPicker')) {
-            $pp = new PostPicker(
-                [
-                    "id" => "settings[{$id}]",
-                    "multiple" => $info['multiple'] ?? 0,
-                    "search" => $info['search'] ?? 1,
-                    "value" => $saved[$id] ?? $info['default_value'] ?? NULL
-                ], 
-                [ "post_type" => $info['post_type'] ]
-            );
+            $cfg = [
+                "id" => "settings[{$id}]",
+                "multiple" => $info['multiple'] ?? 0,
+                "value" => $saved[$id] ?? $info['default_value'] ?? NULL
+            ];
+            if (!empty($info['search'])) {
+                $cfg["search"] = $info['search'];
+            }
+            if (!empty($info['search_placeholder'])) {
+                $cfg["search_placeholder"] = $info['search_placeholder'];
+            }
+            $pp = new PostPicker($cfg, [ "post_type" => $info['post_type'] ]);
             $this->post_picker = true;
             ?>
                 <label for="<?php print $id; ?>"><?php print $info['label']; ?></label>

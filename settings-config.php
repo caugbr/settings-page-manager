@@ -10,7 +10,7 @@ $theme_settings = [
         "type" => "range",
         "description" => 'Blah',
         "label" =>  'Range',
-        "default_value" => '0',
+        "default_value" => 20,
         "min" => 10,
         "max" => 200,
         "step" => 10
@@ -18,11 +18,12 @@ $theme_settings = [
     "default_post" => [
         "type" => "post-picker",
         "description" => 'Select the posts you want',
-        "label" =>  'Select a post',
+        "label" =>  'Select posts',
         "default_value" => [ "1" => "Hello world" ],
         "post_type" => 'post',
         // "search" => false,
-        "multiple" => '1'
+        // "search_placeholder" => "Procure...",
+        "multiple" => 0
     ],
     "hide_wp_bar" => [
         "type" => "switch",
