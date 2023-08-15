@@ -26,6 +26,10 @@ window.addEventListener('load', evt => {
                 const name = evt.target.getAttribute('data-tab');
                 tabEl.setAttribute('data-tab', name);
                 window.location.hash = `#${name}`;
+                const form = document.querySelector('form#admin-page-form');
+                const formAction = form.getAttribute('action').split('#')[0] + '#' + name;
+                console.log('formAction', formAction)
+                form.setAttribute('action', formAction);
             });
         });
         if (window.location.hash) {
@@ -46,11 +50,13 @@ window.addEventListener('load', evt => {
     }
 });
 
-window.addEventListener('beforeunload', event => {
-    if (settingsChanged) {
-        event.returnValue = `Are you sure you want to leave?`;
-    }
-});
+if (window.messages && !!messages.beforeunload) {
+    window.addEventListener('beforeunload', event => {
+        if (settingsChanged) {
+            event.returnValue = messages.beforeunload;
+        }
+    });
+}
 
 function displayValue(input) {
     const display = input.closest('.formline').querySelector('.display');

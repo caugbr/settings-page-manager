@@ -2,7 +2,7 @@
 
 class PostPicker {
     private $default_args = [
-        'posts_per_page' => 15,
+        'posts_per_page' => -1,
         'orderby' => 'date',
         'order' => 'DESC',
         'post_type' => 'post',

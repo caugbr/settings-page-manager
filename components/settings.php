@@ -111,7 +111,6 @@ class ThemeSettings {
                             >
                             <span class="slider"></span>
                         </span>
-                        <!-- <?php print $info['label']; ?> -->
                     </label>
                 <?php } ?>
     

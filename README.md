@@ -1,15 +1,13 @@
 ﻿# Admin Page for Wordpress themes and plugins
-This is a package to add an admistrative page in Wordpress, that can be used by themes and plugins.
+This plugin is a helper to add admistrative pages to Wordpress. The plugin has no admin interface, it just makes available the class ```AdminPage```, to be directly used by themes or plugins.
 
 ## Install
-There's no installation needed, just add the entire folder ```wp-admin-page``` to the main folder of your theme or plugin.
+Just go to your plugins admin page and activate WP Admin Page.
 
-*Using Git*\
-Open a terminal, navigate to the main folder of your theme ou plugin, type ```git clone https://github.com/caugbr/wp-admin-page.git wp-admin-page``` and press Enter.\
-*Download Zip*\
-Copy the contents of the folder ```wp-admin-page-main``` in Zip file, create the folder ```wp-admin-page``` on the main folder of your theme or plugin, and paste all content inside it.
-
-Just include the file ```admin-page/index.php``` and instantiate the class ```AdminPage```.
+    // check if plugin is active
+    if (class_exists('AdminPage')) {
+        // ...
+    }
 
 ## Class ```AdminPage```
 The constructor expects two parameters. The first one is ```$params```, an associative array containing the configuration for the admin page itsef (see the defaut values below). The second parameter is ```$config_vars```, an array containing the user configuration items.
@@ -32,13 +30,15 @@ See: [add_submenu_page](https://developer.wordpress.org/reference/functions/add_
                             // of the top level link. Fill link_title to change the label on first link.
 
         // other parameters
+        "beforeunload_msg" => "" // If not empty, a check will be done before user leaves the page.
+                                 // In some browsers this message can be displayed to user.
+        "option_name" => "admin_page_settings" // Name for WP option
         "page_intro" => "", // An optional text to display below <h1> tag
         "form_title" => "Options", // An optional subtitle
         "form_intro" => "", // Optional text to display below subtitle
         "button_label" => "Save options", // Label for submit button
         "saved_msg" => "Settings successfully updated", // Message after save options
         "security_msg" => "Security check failed and settings could not be updated", // Identity check failed
-        "base_url" => "" // [required] The URL to theme or plugin folder
     ]
 
 ### ```$config_vars```
@@ -149,23 +149,20 @@ Check this example for a theme, using some default values:
 
     // My config items in $config_items
     include_once get_stylesheet_directory() .  "/config-items.php"; 
-    // Include and instanciate the class AdminPage
-    include_once get_stylesheet_directory() .  "/wp-admin-page/index.php";
     $settings = new AdminPage([
         "page_title" => "Theme admin page",
         "page_intro" => "Welcome text here",
         "menu_title" => "Theme options",
         "menu_slug" => "theme-admin-page",
         "form_title" => "Site options",
-        "form_intro" => "Manage your site options here",
-        "base_url" => get_stylesheet_directory_uri()
+        "form_intro" => "Manage your site options here"
     ], $config_items);
     
     // Get the saved options to use in your code
     $theme_options = $settings->get_saved();
 
 ## Using tabs to display other contents
-You can use the ```tabs``` parameter to add some other HTML to the admin page. In  this case the settings will appear in the first tab that will have the fixed id 'settings' and the label 'Options', but you can specify it using the param ```tab_label```. Each tab is an array with 3 items:
+You can use the ```tabs``` parameter to add some other HTML to the admin page, as a new tab. In  this case the settings will appear in the first tab that will have the fixed id 'settings' and the label 'Options', but you can specify this using the param ```tab_label```. Each tab is an array with 3 items:
  * ```label``` - the label for the tab link
  * ```callback``` - the name of the rendering function and
  * ```action``` - the value for ```$_POST['action']``` if this tab is visible on form submission.
@@ -176,7 +173,6 @@ Than you can use the filter ```save_admin_page_message``` to save your fields an
 
 Example for a plugin:
     
-    include_once plugin_dir_path(__FILE__) .  "wp-admin-page/index.php";
     $settings = new AdminPage([
         "parent_slug" => "plugins.php",
         "page_title" => "My Plugin admin page",
@@ -184,8 +180,7 @@ Example for a plugin:
         "menu_title" => "My Plugin options",
         "menu_slug" => "my-plugin-admin-page",
         "form_title" => "",
-        "form_intro" => "Manage My Plugin options here",
-        "base_url" => plugins_url() . "/my-plugin",
+        "form_intro" => "Manage My Plugin options here"
         "tabs" => [
             "label" => "My fields",
             "callback" => "my_fields_html",
@@ -219,13 +214,11 @@ You can create the menu link as a top level item and, optionally, work with subp
 ### Using subpages
 In the following example, we create a top level item with a subpage. The subpages have their own HTML and processing, but you can also create a separated config file and use the class ```ThemeSettings```, used by ```AdminPAge```, to render and save these config items.
 
-    include_once get_stylesheet_directory() . "/wp-admin-page/index.php";
     $settings = new AdminPage([
         "parent_slug" => "",
         "page_title" => "Test admin page",
         "menu_title" => "Admin page",
         "menu_slug" => "theme-admin-page",
-        "base_url" => get_stylesheet_directory_uri(),
         "subpages" => [
             [
                 "page_title" => "My plugin options",
@@ -252,19 +245,12 @@ In the following example, we create a top level item with a subpage. The subpage
         ?>
         <div class="wrap">
             <h1>My plugin</h1>
-            <?php if (!empty($msg)) { ?>
-                <div id="message" class="notice notice-success is-dismissible">
-                    <p><strong><?php print $msg; ?></strong></p>
-                    <button type="button" class="notice-dismiss">
-                        <span class="screen-reader-text">Dismiss this notice.</span>
-                    </button>
-                </div>
-            <?php } ?>
+            <?php $settings->show_message($msg); ?>
             <form action="?page=my-plugin-page" method="post" id="other-page-form" class="settings">
                 <?php $ts->render(); // renderize all items in $other_settings ?>
                 <div class="formline buttons">
                     <button type="submit" id="save_settings" class="button button-primary">
-                        Salvar
+                        Save
                     </button>
                 </div>
                 <input type="hidden" name="action" value="save-other">

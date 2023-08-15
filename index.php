@@ -1,43 +1,70 @@
 <?php
+/*
+ * Plugin Name: WP Admin Page
+ * Description: Helper on adding administrative pages to WP admin.
+ * Version: 1.0.0
+ * Author: Cau Guanabara
+ * Author URI: https://github.com/caugbr
+ * Requires at least: 5.2
+ * Requires PHP: 7.2
+ * License: GPL v2 or later
+ * License URI: https://www.gnu.org/licenses/gpl-2.0.html
+ */
+
 require dirname(__FILE__) . "/components/settings.php";
 
 class AdminPage {
 
-    var $parent_slug = 'themes.php';
-    var $page_title = '';
-    var $menu_title = '';
-    var $capability = 'manage_options';
-    var $menu_slug = '';
-    var $position = NULL;
-    var $icon_url = 'dashicons-admin-generic';
-    var $link_title = '';
+    public $parent_slug = 'themes.php';
+    public $page_title = '';
+    public $menu_title = '';
+    public $capability = 'manage_options';
+    public $menu_slug = '';
+    public $position = NULL;
+    public $icon_url = 'dashicons-admin-generic';
+    public $link_title = '';
 
-    var $page_intro = '';
-    var $form_title = 'Options';
-    var $tab_label = 'Options';
-    var $form_intro = '';
-    var $button_label = 'Save options';
-    var $saved_msg = 'Settings successfully updated';
-    var $security_msg = 'Security check failed and settings were not updated';
+    public $page_intro = '';
+    public $form_title = 'Options';
+    public $tab_label = 'Options';
+    public $form_intro = '';
+    public $button_label = 'Save options';
+    public $saved_msg = 'Settings successfully updated';
+    public $security_msg = 'Security check failed and settings were not updated';
 
-    var $base_url;
-    var $page_url;
-    var $page_id;
-    var $tabs = [];
-    var $subpages = [];
-    var $subpage_ids = [];
-
-    var $config_var = [];
-    var $settings;
+    public $tabs = [];
+    public $subpages = [];
+    public $beforeunload_msg = '';
+    public $option_name = 'admin_page_settings';
+    
+    // Internal
+    private $base_url;
+    private $page_url;
+    private $page_id;
+    private $subpage_ids = [];
+    private $scripts = [];
+    private $styles = [];
+    private $settings;
 
     public function __construct($params = [], $config_var = []) {
         foreach ($params as $pname => $param) {
             if (property_exists($this, $pname)) {
                 $this->{$pname} = $param;
             }
+            if ($pname == '__scripts') {
+                foreach ($param as $id => $url) {
+                    $this->scripts[$id] = $url;
+                }
+            }
+            if ($pname == '__styles') {
+                foreach ($param as $id => $url) {
+                    $this->styles[$id] = $url;
+                }
+            }
         }
+        $this->base_url = plugin_dir_url(__FILE__);
         $this->page_url = admin_url() . $this->admin_path();
-        $this->settings = new ThemeSettings('admin_page_settings', $config_var);
+        $this->settings = new ThemeSettings($this->option_name, $config_var);
 
         // user cannot use 'settings' as tab id, it's reserved.
         @unlink($this->tabs['settings']);
@@ -57,6 +84,10 @@ class AdminPage {
     
     public function render() {
         return $this->settings->render();
+    }
+    
+    public function get_saved() {
+        return $this->settings->get_saved();
     }
     
     public function add_page() {
@@ -119,20 +150,27 @@ class AdminPage {
     }
     
     public function add_js() {
-        wp_enqueue_script("admp-admin-js", $this->base_url . "/wp-admin-page/assets/admin.js");
+        wp_enqueue_script("admp-admin-js", $this->base_url . "assets/admin.js");
+        wp_localize_script('admp-admin-js', 'messages', [ "beforeunload_msg" => $this->beforeunload_msg ]);
+        foreach ($this->scripts as $id => $url) {
+            wp_enqueue_script($id, $url);
+        }
     }
     
     public function add_css() {
-        wp_enqueue_style("admp-admin-css", $this->base_url . "/wp-admin-page/assets/admin.css");
+        wp_enqueue_style("admp-admin-css", $this->base_url . "assets/admin.css");
+        foreach ($this->styles as $id => $url) {
+            wp_enqueue_style($id, $url);
+        }
     }
 
     private function save() {
         $msg = '';
-        if (!empty($_POST['action']) && !empty($_POST['settings'])) {
+        if (!empty($_POST['action'])) {
             if(!wp_verify_nonce($_POST['security'], 'admin_page')) {
                 return $this->security_msg;
             }
-            if ($_POST['action'] == 'save-settings') {
+            if (!empty($_POST['settings']) && $_POST['action'] == 'save-settings') {
                 $this->settings->save($_POST['settings']);
                 $msg = $this->saved_msg;
             }
@@ -151,16 +189,7 @@ class AdminPage {
                 <p><?php print $this->page_intro; ?></p>
             <?php } ?>
 
-            <?php if (!empty($msg)) { ?>
-                <div id="message" class="notice notice-success is-dismissible">
-                    <p>
-                        <strong><?php print $msg; ?></strong>
-                    </p>
-                    <button type="button" class="notice-dismiss">
-                        <span class="screen-reader-text">Dismiss this notice.</span>
-                    </button>
-                </div>
-            <?php } ?>
+            <?php $this->show_message($msg); ?>
 
             <div class="settings">
                 <form action="<?php print $this->page_url; ?>" method="post" id="admin-page-form">
@@ -215,7 +244,27 @@ class AdminPage {
         $this->tabs_css();
     }
 
+    public function show_message($msg, $is_error = false, $is_dismissible = true) {
+        if (!empty($msg)) {
+            $cls = $is_error ? 'notice-error' : 'notice-success';
+            if ($is_dismissible) {
+                $cls .= ' is-dismissible';
+            }
+            ?>
+            <div id="message" class="notice <?php print $cls; ?>">
+                <p><strong><?php print $msg; ?></strong></p>
+                <?php if ($is_dismissible) { ?>
+                    <button type="button" class="notice-dismiss">
+                        <span class="screen-reader-text">Dismiss this notice.</span>
+                    </button>
+                <?php } ?>
+            </div>
+            <?php
+        }
+    }
+
     private function tabs_css() {
+        if (!empty($this->tabs)) {
         ?>
         <style>
             <?php foreach (array_keys($this->tabs) as $id) { ?>
@@ -235,5 +284,6 @@ class AdminPage {
             }
         </style>
         <?php
+        }
     }
 }

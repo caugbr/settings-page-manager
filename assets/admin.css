@@ -49,16 +49,38 @@
 .formline input[type="number"],
 .formline input[type="search"],
 .formline select,
-.formline textarea {
+.formline textarea,
+.formline .input {
     width: 100%;
     max-width: 500px;
     padding: 0 0.5rem;
     font-size: 14px;
     vertical-align: middle;
 }
+
 .formline .info {
     font-style: italic;
     color: #666;
+}
+.formline .input {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 0.5rem;
+    padding: 0;
+}
+.formline .input input,
+.formline .input select,
+.formline .input textarea {
+    max-width: 100%;
+    flex-grow: 4;
+    flex-shrink: 4;
+}
+.formline .input button,
+.formline input[type="button"],
+.formline input[type="submit"] {
+    flex-grow: 0;
+    flex-shrink: 0;
 }
 
 
