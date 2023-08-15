@@ -10,6 +10,7 @@ class PostPicker {
     ];
     private $default_cfg = [
         'id' => '',
+        'name' => '',
         'title' => 'Post picker',
         'button_label' => 'Select a post',
         'select_label' => 'Select',
@@ -29,100 +30,22 @@ class PostPicker {
         $this->posts = get_posts($this->args);
     }
 
-    public function picker_css() {
-        ?>
-        <style>
-            .post-picker-input {
-                display: flex;
-                flex-direction: row;
-                width: 100%;
-                max-width: 500px;
-                gap: 0.25rem;
-                align-items: flex-start;
-            }
-            .post-picker-input h3 {
-                margin: 0;
-            }
-            .picker-field {
-                display: inline-block;
-                padding: 0.25rem 0.5rem;
-                background-color: #fff;
-                border: 1px solid #8c8f94;
-                border-radius: 4px;
-                min-height: 1.86rem;
-                flex-grow: 5;
-                flex-shrink: 5;
-            }
-            .picker-button {
-                width: auto;
-                flex-grow: 0;
-                flex-shrink: 0;
-                height: 1.86rem;
-            }
-            .close-picker {
-                float: right;
-                text-decoration: none;
-                font-size: 22px;
-                font-weight: bold;
-                color: #666;
-            }
-            .post-picker {
-                opacity: 0;
-                pointer-events: none;
-                position: fixed;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%);
-                width: 90%;
-                max-width: 560px;
-                background-color: #fefefe;
-                transition: opacity 250ms ease-in-out 0s;
-                border-radius: 6px;
-                border: 1px solid #ccc;
-                box-shadow: rgba(50, 50, 93, 0.25) 0px 13px 27px -5px, rgba(0, 0, 0, 0.3) 0px 8px 16px -8px;
-            }
-            .post-picker-open .post-picker {
-                opacity: 1;
-                pointer-events: all;
-            }
-            .post-picker header {
-                padding: 1rem;
-            }
-            .post-picker .search {
-                background-color: #efefef;
-                padding: 1rem 1rem 0.5rem;
-            }
-            .post-picker #search-field {
-                width: 100%;
-                max-width: 100%;
-                border: 1px solid #ddd;
-            }
-            .post-picker .stage {
-                padding: 0 1rem 0.5rem 1rem;
-                max-height: 15rem;
-                overflow: auto;
-                background-color: #efefef;                
-            }
-            .post-picker footer {
-                padding: 1rem;
-                text-align: right;
-            }
-        </style>
-        <?php
-    }
-
     public function picker_js() {
         ?>
         <script>
             function closePicker(evt) {
                 if (!evt || !evt.target.matches('.post-picker, .post-picker *')) {
-                    if (document.body.classList.contains('post-picker-open')) {
-                        const field = document.querySelector('#search-field');
-                        if (field) {
-                            field.value = '';
-                            field.dispatchEvent(new Event('input'));
-                        }
-                        document.body.classList.remove('post-picker-open');
+                    const pickers = document.querySelectorAll('.post-picker-input.open');
+                    if (pickers.length) {
+                        Array.from(pickers).forEach(picker => {
+                            console.log('picker', picker)
+                            const field = picker.querySelector('#search-field');
+                            if (field) {
+                                field.value = '';
+                                field.dispatchEvent(new Event('input'));
+                            }
+                            picker.classList.remove('open');
+                        });
                     }
                 }
             }
@@ -133,9 +56,10 @@ class PostPicker {
                         const inputId = picker.getAttribute('data-id');
                         const searchField = picker.querySelector('#search-field');
                         picker.querySelector('.open-picker').addEventListener('click', evt => {
+                            const thisPicker = evt.target.closest('.post-picker-input');
                             evt.preventDefault();
-                            document.body.classList.add('post-picker-open');
-                            const checked = picker.querySelectorAll(`input[name^="${inputId}"]`);
+                            thisPicker.classList.add('open');
+                            const checked = thisPicker.querySelectorAll(`input[name^="${inputId}"]`);
                             Array.from(checked).forEach(inp => {
                                 const val = inp.name.replace(/^sett.+\[(\d+)\]$/, '$1');
                                 const selector = `.post-picker .stage input[value="${val}"]`;
@@ -149,12 +73,14 @@ class PostPicker {
                             }
                         });
                         picker.querySelector('.close-picker').addEventListener('click', evt => {
+                            const thisPicker = evt.target.closest('.post-picker-input');
                             evt.preventDefault();
-                            document.body.classList.remove('post-picker-open');
+                            thisPicker.classList.remove('open');
                         });
                         if (searchField) {
                             picker.querySelector('#search-field').addEventListener('input', evt => {
-                                const labels = picker.querySelectorAll('li > label');
+                                const thisPicker = evt.target.closest('.post-picker-input');
+                                const labels = thisPicker.querySelectorAll('li > label');
                                 if (labels.length) {
                                     const val = evt.target.value.toLowerCase();
                                     Array.from(labels).forEach(label => {
@@ -166,13 +92,14 @@ class PostPicker {
                             });
                         }
                         picker.querySelector('.picker-select').addEventListener('click', evt => {
+                            const thisPicker = evt.target.closest('.post-picker-input');
                             evt.preventDefault();
                             let ret = {};
-                            const wrapInputs = picker.querySelector('.picker-inputs');
+                            const wrapInputs = thisPicker.querySelector('.picker-inputs');
                             wrapInputs.innerHTML = '';
-                            const displayValues = picker.querySelector('.picker-field');
+                            const displayValues = thisPicker.querySelector('.picker-field');
                             displayValues.innerHTML = '';
-                            const inputs = picker.querySelectorAll('input:checked');
+                            const inputs = thisPicker.querySelectorAll('input:checked');
                             Array.from(inputs).forEach(input => {
                                 const id = input.value;
                                 const title = input.getAttribute('data-title');
@@ -196,9 +123,8 @@ class PostPicker {
 
     public function picker_html() {
         $input_type = $this->cfg['multiple'] ? 'checkbox' : 'radio';
-        $button_id = preg_replace("/settings\[([^\]]+)\]/", "$1", $this->cfg['id']) . "-button";
         ?>
-        <div class="post-picker-input" data-id="<?php print $this->cfg['id']; ?>">
+        <div class="post-picker-input" data-id="<?php print $this->cfg['name']; ?>">
             <div class="picker-field"><?php
                 if (!empty($this->cfg['value'])) {
                     foreach ($this->cfg['value'] as $id => $title) {
@@ -206,7 +132,7 @@ class PostPicker {
                     }
                 }
             ?></div>
-            <button class="button-secondary open-picker" id="<?php print $button_id; ?>">
+            <button class="button-secondary open-picker" id="<?php print $this->cfg['id']; ?>-button">
                 <?php print $this->cfg['button_label']; ?>
             </button>
             <div class="post-picker <?php print sanitize_title($this->cfg['title']); ?>">
@@ -224,8 +150,8 @@ class PostPicker {
                         <ul>
                             <?php foreach ($this->posts as $post) { ?>
                                 <li>
-                                    <label for="post_<?php print $post->ID; ?>">
-                                        <input type="<?php print $input_type; ?>" name="posts[]" id="post_<?php print $post->ID; ?>" value="<?php print $post->ID; ?>" data-title="<?php print $post->post_title; ?>">
+                                    <label for="<?php print $this->cfg['id']; ?>_<?php print $post->ID; ?>">
+                                        <input type="<?php print $input_type; ?>" name="posts[]" id="<?php print $this->cfg['id']; ?>_<?php print $post->ID; ?>" value="<?php print $post->ID; ?>" data-title="<?php print $post->post_title; ?>">
                                         <span><?php print $post->post_title; ?></span>
                                     </label>
                                 </li>
@@ -243,7 +169,7 @@ class PostPicker {
                 if (!empty($this->cfg['value'])) {
                     foreach ($this->cfg['value'] as $id => $title) {
                         ?>
-                        <input type="hidden" name="<?php print $this->cfg['id']; ?>[<?php print $id; ?>]" value="<?php print $title; ?>">
+                        <input type="hidden" name="<?php print $this->cfg['name']; ?>[<?php print $id; ?>]" value="<?php print $title; ?>">
                         <?php
                     }
                 }

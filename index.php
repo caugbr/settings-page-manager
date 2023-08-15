@@ -1,6 +1,6 @@
 <?php
 /*
- * Plugin Name: WP Admin Page
+ * Plugin Name: Settings Page
  * Description: Helper on adding administrative pages to WP admin.
  * Version: 1.0.0
  * Author: Cau Guanabara
@@ -13,7 +13,7 @@
 
 require dirname(__FILE__) . "/components/settings.php";
 
-class AdminPage {
+class SettingsPage {
 
     public $parent_slug = 'themes.php';
     public $page_title = '';
@@ -64,7 +64,7 @@ class AdminPage {
         }
         $this->base_url = plugin_dir_url(__FILE__);
         $this->page_url = admin_url() . $this->admin_path();
-        $this->settings = new ThemeSettings($this->option_name, $config_var);
+        $this->settings = new Settings($this->option_name, $config_var);
 
         // user cannot use 'settings' as tab id, it's reserved.
         @unlink($this->tabs['settings']);
@@ -73,7 +73,7 @@ class AdminPage {
     }
 
     public function temp_settings($option_name, $config_var = []) {
-        return new ThemeSettings($option_name, $config_var);
+        return new Settings($option_name, $config_var);
     }
     
     public function admin_path() {

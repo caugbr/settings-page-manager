@@ -197,11 +197,87 @@
 }
 
 .formline input[type="range"]:focus::-moz-range-thumb {
-    /* border: 1px solid #053a5f; */
     outline: 1px solid #3582c4;
     outline-offset: 0.1rem; 
 }
- 
+
+
+/* post picker */
+.post-picker-input {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    max-width: 500px;
+    gap: 0.25rem;
+    align-items: flex-start;
+}
+.post-picker-input h3 {
+    margin: 0;
+}
+.picker-field {
+    display: inline-block;
+    padding: 0.25rem 0.5rem;
+    background-color: #fff;
+    border: 1px solid #8c8f94;
+    border-radius: 4px;
+    min-height: 1.86rem;
+    flex-grow: 5;
+    flex-shrink: 5;
+}
+.picker-button {
+    width: auto;
+    flex-grow: 0;
+    flex-shrink: 0;
+    height: 1.86rem;
+}
+.close-picker {
+    float: right;
+    text-decoration: none;
+    font-size: 22px;
+    font-weight: bold;
+    color: #666;
+}
+.post-picker {
+    opacity: 0;
+    pointer-events: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%;
+    max-width: 560px;
+    background-color: #fefefe;
+    transition: opacity 250ms ease-in-out 0s;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 13px 27px -5px, rgba(0, 0, 0, 0.3) 0px 8px 16px -8px;
+}
+.post-picker-input.open .post-picker {
+    opacity: 1;
+    pointer-events: all;
+}
+.post-picker header {
+    padding: 1rem;
+}
+.post-picker .search {
+    background-color: #efefef;
+    padding: 1rem 1rem 0.5rem;
+}
+.post-picker #search-field {
+    width: 100%;
+    max-width: 100%;
+    border: 1px solid #ddd;
+}
+.post-picker .stage {
+    padding: 0 1rem 0.5rem 1rem;
+    max-height: 15rem;
+    overflow: auto;
+    background-color: #efefef;                
+}
+.post-picker footer {
+    padding: 1rem;
+    text-align: right;
+}
   
 
 

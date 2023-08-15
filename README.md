@@ -1,15 +1,15 @@
 ﻿# Admin Pages for Wordpress themes and plugins
-This plugin is a helper to add admistrative pages to Wordpress. The plugin has no admin interface, it just makes available the class ```AdminPage```, to be directly used by themes or plugins.
+This plugin is a helper to add admistrative pages to Wordpress. The plugin has no admin interface, it just makes available the class ```SettingsPage```, to be directly used by themes or plugins.
 
 ## Install
 Just go to your plugins admin page and activate WP Admin Page.
 
     // check if plugin is active
-    if (class_exists('AdminPage')) {
+    if (class_exists('SettingsPage')) {
         // ...
     }
 
-## Class ```AdminPage```
+## Class ```SettingsPage```
 The constructor expects two parameters. The first one is ```$params```, an associative array containing the configuration for the admin page itsef (see the defaut values below). The second parameter is ```$config_vars```, an array containing the user configuration items.
 
 ### ```$params```
@@ -149,7 +149,7 @@ Check this example for a theme, using some default values:
 
     // My config items in $config_items
     include_once get_stylesheet_directory() .  "/config-items.php"; 
-    $settings = new AdminPage([
+    $settings = new SettingsPage([
         "page_title" => "Theme admin page",
         "page_intro" => "Welcome text here",
         "menu_title" => "Theme options",
@@ -173,7 +173,7 @@ Than you can use the filter ```save_admin_page_message``` to save your fields an
 
 Example for a plugin:
     
-    $settings = new AdminPage([
+    $settings = new SettingsPage([
         "parent_slug" => "plugins.php",
         "page_title" => "My Plugin admin page",
         "page_intro" => "Welcome text here",
@@ -211,9 +211,9 @@ Example for a plugin:
 You can create the menu link as a top level item and, optionally, work with subpages. To configure your page to be a top level menu item, just send ```parent_slug``` as an empty string.
 
 ### Using subpages
-In the following example, we create a top level item with a subpage. The subpages have their own HTML and processing, but you can also create a separated config file and use the class ```ThemeSettings```, used by ```AdminPAge```, to render and save these config items.
+In the following example, we create a top level item with a subpage. The subpages have their own HTML and processing, but you can also create a separated config file and use the class ```Settings```, used by ```AdminPAge```, to render and save these config items.
 
-    $settings = new AdminPage([
+    $settings = new SettingsPage([
         "parent_slug" => "",
         "page_title" => "Test admin page",
         "menu_title" => "Admin page",
@@ -235,7 +235,7 @@ In the following example, we create a top level item with a subpage. The subpage
         // include $other_settings
         include_once get_stylesheet_directory() . "/other-config.php";
 
-        // temp_settings() returns a new instance of ThemeSettings,
+        // temp_settings() returns a new instance of Settings,
         // configured to use our wp option 'my_page_settings', based on
         // our configuration variable, $other_settings.
         $ts = $settings->temp_settings('my_page_settings', $other_settings);

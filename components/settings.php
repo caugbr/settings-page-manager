@@ -1,6 +1,6 @@
 <?php
 
-class ThemeSettings {
+class Settings {
     
     private $settings;
     private $option_name;
@@ -16,7 +16,8 @@ class ThemeSettings {
     public function render_post_picker($id, $info, $saved = []) {
         include_once dirname(__FILE__) . "/post-picker.php";
         $cfg = [
-            "id" => "settings[{$id}]",
+            "id" => $id,
+            "name" => "settings[{$id}]",
             "multiple" => $info['multiple'] ?? 0,
             "value" => $saved[$id] ?? $info['default_value'] ?? NULL
         ];
@@ -26,7 +27,7 @@ class ThemeSettings {
         if (!empty($info['search_placeholder'])) {
             $cfg["search_placeholder"] = $info['search_placeholder'];
         }
-        $pp = new PostPicker($cfg, [ "post_type" => $info['post_type'] ]);
+        $pp = new PostPicker($cfg, [ "post_type" => $info['post_type'] ?? 'post' ]);
         $this->post_picker = true;
         ?>
             <label for="<?php print $id; ?>-button"><?php print $info['label']; ?></label>
@@ -37,7 +38,6 @@ class ThemeSettings {
     public function post_picker_stuff() {
         if ($this->post_picker) {
             $pp = new PostPicker();
-            print $pp->picker_css();
             print $pp->picker_js();
         }
     }
