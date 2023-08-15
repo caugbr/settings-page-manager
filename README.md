@@ -1,4 +1,4 @@
-﻿# Admin Page for Wordpress themes and plugins
+﻿# Admin Pages for Wordpress themes and plugins
 This plugin is a helper to add admistrative pages to Wordpress. The plugin has no admin interface, it just makes available the class ```AdminPage```, to be directly used by themes or plugins.
 
 ## Install
@@ -169,7 +169,7 @@ You can use the ```tabs``` parameter to add some other HTML to the admin page, a
 
 Remember that you are adding fields to the same form and the submit button will be the same to all tabs, so you should work with ```$_POST['action']``` as a condition to save your content.
 
-Than you can use the filter ```save_admin_page_message``` to save your fields an change the return message.
+Than you can use the filter ```save_admin_page_message``` to save your fields and change the return message.
 
 Example for a plugin:
     
@@ -206,7 +206,6 @@ Example for a plugin:
         return $msg;
     }
     add_filter('save_admin_page_message', 'save_my_fields');
-
 
 ## Link as a top level menu item
 You can create the menu link as a top level item and, optionally, work with subpages. To configure your page to be a top level menu item, just send ```parent_slug``` as an empty string.
