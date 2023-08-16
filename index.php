@@ -1,6 +1,6 @@
 <?php
 /*
- * Plugin Name: Settings Page
+ * Plugin Name: Settings Page Manager
  * Description: Helper on adding administrative pages to WP admin.
  * Version: 1.0.0
  * Author: Cau Guanabara

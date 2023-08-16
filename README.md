@@ -1,8 +1,8 @@
-﻿# Admin Pages for Wordpress themes and plugins
-This plugin is a helper to add admistrative pages to Wordpress. The plugin has no admin interface, it just makes available the class ```SettingsPage```, to be directly used by themes or plugins.
+﻿# Manage admin pages for Wordpress themes and plugins
+The plugin **Settings Page Manager** is a helper to add admistrative pages to Wordpress. It has no admin interface, just makes available the class ```SettingsPage```, to be directly used by themes or plugins.
 
 ## Install
-Just go to your plugins admin page and activate WP Admin Page.
+Just go to your plugins admin page and activate Settings Page Manager.
 
     // check if plugin is active
     if (class_exists('SettingsPage')) {
