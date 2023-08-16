@@ -115,6 +115,7 @@ class Settings {
                 <?php } ?>
     
                 <?php if ($info['type'] == 'select') { ?>
+                    <label for="<?php print $id; ?>"><?php print $info['label']; ?></label>
                     <select name="settings[<?php print $id; ?>]" id="<?php print $id; ?>">
                         <?php foreach($options as $opt) { ?>
                             <option 
