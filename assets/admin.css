@@ -278,6 +278,65 @@
     padding: 1rem;
     text-align: right;
 }
+
+
+
+
+.option-buttons {
+    display: inline-block;
+    width: auto;
+    white-space: nowrap;
+    box-shadow: 0 0 0 transparent;
+    border-radius: 4px;
+    overflow: hidden;
+    box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;
+}
+
+.option-buttons .btn {
+    position: relative;
+    margin: 0;
+    float: left;
+    border-right: 1px solid #ccc;
+}
+
+.option-buttons .btn:last-child {
+    border-right: 0px;
+}
+
+.option-buttons .btn input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.option-buttons .btn label {
+    display: inline-block;
+    padding: 3px 8px;
+    font-size: 12px;
+    line-height: 1.6em;
+    margin: 0;
+    background-color: #dedede;
+    color: #333;
+    transition: background-color 200ms ease-in-out 0s;
+    margin-bottom: 0 !important;
+}
+
+.option-buttons .btn label:hover {
+    background-color: #c9c9c9;
+}
+
+.option-buttons input:checked + label:hover,
+.option-buttons input:checked + label {
+    background-color: #007cba;
+    border-color: #007cba;
+    color: #FFF;
+}
+
+.option-buttons input:disabled + label:hover,
+.option-buttons input:disabled + label {
+    cursor: default;
+    opacity: 0.6;
+}
   
 
 

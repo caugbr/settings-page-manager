@@ -150,6 +150,18 @@ class Settings {
                     >
                 <?php } ?>
     
+                <?php if ('buttons-group' == $info['type']) { ?>
+                    <label for="<?php print $id . '-0'; ?>"><?php print $info['label']; ?></label>
+                    <div class="option-buttons">
+                        <?php foreach ($options as $i => $opt) { ?>
+                            <div class="btn">
+                                <input type="radio" name="settings[<?php print $id; ?>]" id="<?php print $id . '-' . $i; ?>" value="<?php print $opt['value']; ?>"<?php if ($value == $opt['value']) print ' checked'; ?>>
+                                <label for="<?php print $id . '-' . $i; ?>"><?php print $opt['label']; ?></label>
+                            </div>
+                        <?php } ?>
+                    </div>
+                <?php } ?>
+    
                 <?php if ('radio-group' == $info['type']) { ?>
                     <label for="<?php print "{$id}-0"; ?>"><?php print $info['label']; ?></label>
                     <?php foreach($options as $i => $opt) { ?>

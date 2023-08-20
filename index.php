@@ -153,7 +153,12 @@ class SettingsPage {
         wp_enqueue_script("admp-admin-js", $this->base_url . "assets/admin.js");
         wp_localize_script('admp-admin-js', 'messages', [ "beforeunload_msg" => $this->beforeunload_msg ]);
         foreach ($this->scripts as $id => $url) {
-            wp_enqueue_script($id, $url);
+            if (preg_match("/^(.+)-localize$/", $id, $m)) {
+                $lid = str_replace('-', '_', $m[1]);
+                wp_localize_script($m[1], $lid, $url);
+            } else {
+                wp_enqueue_script($id, $url);
+            }
         }
     }
     
@@ -255,7 +260,7 @@ class SettingsPage {
                 <p><strong><?php print $msg; ?></strong></p>
                 <?php if ($is_dismissible) { ?>
                     <button type="button" class="notice-dismiss">
-                        <span class="screen-reader-text">Dismiss this notice.</span>
+                        <span class="screen-reader-text"><?php _e('Dismiss this notice.'); ?></span>
                     </button>
                 <?php } ?>
             </div>
